@@ -46,8 +46,11 @@ sudo apt update && sudo apt upgrade -y
 
 # Step 2: Install dependencies
 log_info "Step 2: Installing system dependencies..."
-sudo apt install -y python3.10 python3.10-venv python3-pip
-sudo apt install -y build-essential libssl-dev libffi-dev python3-dev
+# Update repositories first to make sure everything is current
+sudo apt update
+
+# Install the standard Python 3 packages (which are 3.10 on Ubuntu 22.04)
+sudo apt install -y python3 python3-venv python3-pip python3-dev build-essential libssl-dev libffi-dev
 sudo apt install -y postgresql postgresql-contrib
 sudo apt install -y nginx
 sudo apt install -y git
@@ -93,7 +96,7 @@ cd $DEPLOY_DIR
 # Step 5: Setup Python virtual environment
 log_info "Step 5: Setting up Python virtual environment..."
 if [ ! -d "venv" ]; then
-    python3.10 -m venv venv
+    python3 -m venv venv
     log_info "Virtual environment created"
 else
     log_warn "Virtual environment already exists"
