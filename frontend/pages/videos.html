@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Insights - NewsHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <style>
+        .videos-page {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 42px;
+            color: var(--toi-red);
+            margin-bottom: 15px;
+            font-family: var(--font-heading);
+        }
+        
+        .page-header p {
+            font-size: 18px;
+            color: var(--medium-gray);
+        }
+        
+        .featured-video {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 50px;
+        }
+        
+        .featured-video-player {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: var(--dark-gray);
+            overflow: hidden;
+        }
+        
+        .featured-video-player img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .featured-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(200, 16, 46, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .featured-play-icon:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: var(--toi-red);
+        }
+        
+        .featured-video-info {
+            padding: 30px;
+        }
+        
+        .featured-video-info h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-family: var(--font-heading);
+        }
+        
+        .featured-video-meta {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--medium-gray);
+        }
+        
+        .featured-video-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .video-categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .category-btn {
+            background: var(--white);
+            border: 2px solid var(--toi-border);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background: var(--toi-red);
+            color: var(--white);
+            border-color: var(--toi-red);
+        }
+        
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+        
+        .video-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            background: var(--dark-gray);
+        }
+        
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .video-card:hover .video-thumbnail img {
+            transform: scale(1.05);
+        }
+        
+        .video-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--white);
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .video-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(200, 16, 46, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 18px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .video-card:hover .video-play-icon {
+            opacity: 1;
+        }
+        
+        .video-info {
+            padding: 15px;
+        }
+        
+        .video-info h3 {
+            font-size: 15px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+        
+        .video-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--medium-gray);
+        }
+        
+        @media (max-width: 1200px) {
+            .videos-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .videos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .featured-video-player {
+                height: 300px;
+            }
+            
+            .page-header h1 {
+                font-size: 32px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Header Component -->
+    <div id="header-placeholder"></div>
+    <div id="breaking-news-placeholder"></div>
+    
+    <!-- Videos Content -->
+    <section class="videos-page">
+        <div class="page-header">
+            <h1><i class="fab fa-youtube"></i> Video Insights</h1>
+            <p>Watch the latest news videos, interviews, and documentaries</p>
+        </div>
+        
+        <!-- Featured Video -->
+        <div class="featured-video">
+            <div class="featured-video-player">
+                <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113" alt="Featured Video">
+                <div class="featured-play-icon">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="featured-video-info">
+                <h2>Behind the Scenes: How News Stories Are Produced</h2>
+                <div class="featured-video-meta">
+                    <span><i class="fab fa-youtube"></i> NewsHub</span>
+                    <span><i class="far fa-eye"></i> 125K views</span>
+                    <span><i class="far fa-calendar"></i> 2 days ago</span>
+                    <span><i class="far fa-clock"></i> 15:30</span>
+                </div>
+                <p>Take an exclusive look into our newsroom and discover the process behind creating compelling news stories. From research to production, learn what it takes to deliver quality journalism.</p>
+            </div>
+        </div>
+        
+        <!-- Video Categories -->
+        <div class="video-categories">
+            <button class="category-btn active">All Videos</button>
+            <button class="category-btn">Breaking News</button>
+            <button class="category-btn">Interviews</button>
+            <button class="category-btn">Documentaries</button>
+            <button class="category-btn">Live Coverage</button>
+            <button class="category-btn">Analysis</button>
+        </div>
+        
+        <!-- Videos Grid -->
+        <div class="videos-grid">
+            <!-- Video 1 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1598899134739-24c46f58b8c0" alt="Video">
+                    <span class="video-duration">12:45</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Interview with Tech Innovator of the Year</h3>
+                    <div class="video-stats">
+                        <span>Tech Insights</span>
+                        <span>89K views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video 2 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b" alt="Video">
+                    <span class="video-duration">18:20</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Exploring the Future of Space Exploration</h3>
+                    <div class="video-stats">
+                        <span>Space Today</span>
+                        <span>204K views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video 3 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1551135049-8a33b42738b4" alt="Video">
+                    <span class="video-duration">10:15</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Cultural Festival Highlights From Around the World</h3>
+                    <div class="video-stats">
+                        <span>Global Culture</span>
+                        <span>76K views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video 4 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c" alt="Video">
+                    <span class="video-duration">14:30</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Climate Change: Expert Panel Discussion</h3>
+                    <div class="video-stats">
+                        <span>Environment</span>
+                        <span>142K views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video 5 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Video">
+                    <span class="video-duration">8:45</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Stock Market Analysis and Predictions</h3>
+                    <div class="video-stats">
+                        <span>Business News</span>
+                        <span>98K views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video 6 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1" alt="Video">
+                    <span class="video-duration">16:00</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>AI in Healthcare: A Documentary</h3>
+                    <div class="video-stats">
+                        <span>Tech Docs</span>
+                        <span>187K views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video 7 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa" alt="Video">
+                    <span class="video-duration">11:20</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Cybersecurity Threats in 2025</h3>
+                    <div class="video-stats">
+                        <span>Tech Security</span>
+                        <span>65K views</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Video 8 -->
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1569163139394-de4798aa62b0" alt="Video">
+                    <span class="video-duration">13:10</span>
+                    <div class="video-play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h3>Renewable Energy Revolution</h3>
+                    <div class="video-stats">
+                        <span>Green Future</span>
+                        <span>123K views</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Include Footer Component -->
+    <div id="footer-placeholder"></div>
+    
+    <!-- Floating Action Button -->
+    <div class="fab">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/navigation.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/app.js"></script>
+    <script>
+        // Load components
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header-placeholder').innerHTML = data);
+        
+        fetch('../components/breaking-news.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('breaking-news-placeholder').innerHTML = data);
+        
+        fetch('../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+        
+        // Category filter functionality
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

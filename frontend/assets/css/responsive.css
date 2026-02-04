@@ -1,0 +1,266 @@
+/* responsive.css - Responsive Media Queries */
+
+/* Large Desktop (1400px and above) */
+@media (min-width: 1400px) {
+    .main-container {
+        max-width: 1600px;
+    }
+    
+    .video-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* Desktop (1200px - 1399px) */
+@media (max-width: 1399px) {
+    .main-container {
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+}
+
+/* Tablet Landscape (992px - 1199px) */
+@media (max-width: 1199px) {
+    .main-container {
+        grid-template-columns: 1fr 2fr;
+    }
+    
+    .right-sidebar {
+        grid-column: 1 / -1;
+        margin-top: 25px;
+        position: static;
+        max-height: none;
+    }
+    
+    .video-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .footer-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .search-bar {
+        width: 300px;
+    }
+}
+
+/* Tablet Portrait (768px - 991px) */
+@media (max-width: 991px) {
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+    
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .left-sidebar {
+        position: static;
+        max-height: none;
+    }
+    
+    .hamburger-menu {
+        display: block;
+    }
+    
+    .category-list {
+        display: none;
+    }
+    
+    .category-list.show {
+        display: block;
+    }
+    
+    .trending-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .search-bar {
+        width: 100%;
+        max-width: 350px;
+    }
+    
+    .secondary-nav-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .secondary-nav-links {
+        justify-content: center;
+    }
+}
+
+/* Mobile Landscape (576px - 767px) */
+@media (max-width: 767px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .main-article img {
+        height: 320px;
+    }
+    
+    .article-title {
+        font-size: 22px;
+    }
+    
+    .search-bar {
+        width: 100%;
+    }
+    
+    .edition-container {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    
+    .section-title h2 {
+        font-size: 18px;
+    }
+}
+
+/* Mobile Portrait (320px - 575px) */
+@media (max-width: 575px) {
+    .logo h1 {
+        font-size: 22px;
+    }
+    
+    .logo i {
+        font-size: 22px !important;
+    }
+    
+    nav a {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+    
+    nav a i {
+        display: none;
+    }
+    
+    .article-title {
+        font-size: 18px;
+    }
+    
+    .article-overlay {
+        padding: 25px 15px 15px;
+    }
+    
+    .search-bar {
+        padding: 6px 12px;
+    }
+    
+    .search-bar input {
+        font-size: 13px;
+    }
+    
+    .secondary-nav-links {
+        gap: 10px;
+    }
+    
+    .secondary-nav-links a {
+        font-size: 13px;
+    }
+    
+    .breaking-news-label {
+        font-size: 13px;
+        padding: 4px 10px;
+    }
+    
+    .breaking-news-text {
+        font-size: 14px;
+        padding: 0 30px;
+    }
+    
+    .trending-content h3 {
+        font-size: 14px;
+    }
+    
+    .trending-content p {
+        font-size: 12px;
+    }
+    
+    .fab {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Extra Small Mobile (Below 400px) */
+@media (max-width: 399px) {
+    .logo h1 {
+        font-size: 18px;
+    }
+    
+    .header-container {
+        padding: 0 15px;
+    }
+    
+    .main-container {
+        padding: 0 15px;
+    }
+    
+    .article-title {
+        font-size: 16px;
+    }
+    
+    .category-title {
+        font-size: 14px;
+    }
+    
+    .secondary-nav-highlights {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .highlight-tag {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Print Styles */
+@media print {
+    header,
+    .breaking-news,
+    .secondary-nav,
+    .left-sidebar,
+    .right-sidebar,
+    .video-section,
+    footer,
+    .fab {
+        display: none !important;
+    }
+    
+    .main-container {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+    
+    .main-content {
+        box-shadow: none;
+    }
+    
+    a {
+        text-decoration: underline;
+    }
+}

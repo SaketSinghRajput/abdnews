@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - NewsHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <style>
+        .categories-page {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 42px;
+            color: var(--toi-red);
+            margin-bottom: 15px;
+            font-family: var(--font-heading);
+        }
+        
+        .page-header p {
+            font-size: 18px;
+            color: var(--medium-gray);
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .category-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .category-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-icon {
+            font-size: 80px;
+            color: var(--white);
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+        
+        .category-card:hover .category-icon {
+            transform: scale(1.1);
+        }
+        
+        .category-bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255,255,255,0.1) 10px,
+                rgba(255,255,255,0.1) 20px
+            );
+        }
+        
+        .category-content {
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .category-content h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--dark-gray);
+            font-family: var(--font-heading);
+        }
+        
+        .category-count {
+            color: var(--medium-gray);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .category-description {
+            font-size: 14px;
+            color: var(--medium-gray);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .explore-btn {
+            background: var(--toi-red);
+            color: var(--white);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .explore-btn:hover {
+            background: var(--primary-red);
+            transform: translateX(5px);
+        }
+        
+        /* Different gradient colors for each category */
+        .category-card:nth-child(1) .category-image {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .category-card:nth-child(2) .category-image {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        
+        .category-card:nth-child(3) .category-image {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        
+        .category-card:nth-child(4) .category-image {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+        
+        .category-card:nth-child(5) .category-image {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+        }
+        
+        .category-card:nth-child(6) .category-image {
+            background: linear-gradient(135deg, #30cfd0, #330867);
+        }
+        
+        .category-card:nth-child(7) .category-image {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+        }
+        
+        .category-card:nth-child(8) .category-image {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+        }
+        
+        .category-card:nth-child(9) .category-image {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        }
+        
+        @media (max-width: 992px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Header Component -->
+    <div id="header-placeholder"></div>
+    <div id="breaking-news-placeholder"></div>
+    
+    <!-- Categories Content -->
+    <section class="categories-page">
+        <div class="page-header">
+            <h1><i class="fas fa-th-large"></i> News Categories</h1>
+            <p>Explore news by topic and stay informed about what matters to you</p>
+        </div>
+        
+        <div class="categories-grid">
+            <!-- Politics -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-landmark category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Politics</h2>
+                    <p class="category-count">245 Articles</p>
+                    <p class="category-description">Stay updated with political developments, elections, policies, and government decisions.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Business -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-briefcase category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Business</h2>
+                    <p class="category-count">312 Articles</p>
+                    <p class="category-description">Get insights into markets, economy, startups, and corporate world news.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Technology -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-microchip category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Technology</h2>
+                    <p class="category-count">428 Articles</p>
+                    <p class="category-description">Discover the latest in tech innovations, gadgets, AI, and digital trends.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Sports -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-football-ball category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Sports</h2>
+                    <p class="category-count">567 Articles</p>
+                    <p class="category-description">Follow your favorite sports, teams, athletes, and major sporting events.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Entertainment -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-film category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Entertainment</h2>
+                    <p class="category-count">389 Articles</p>
+                    <p class="category-description">Movies, music, TV shows, celebrities, and pop culture updates.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Science -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-flask category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Science</h2>
+                    <p class="category-count">198 Articles</p>
+                    <p class="category-description">Scientific discoveries, research, space exploration, and innovations.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Health -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-heartbeat category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Health</h2>
+                    <p class="category-count">276 Articles</p>
+                    <p class="category-description">Medical breakthroughs, wellness tips, fitness, and healthcare news.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Environment -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-leaf category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Environment</h2>
+                    <p class="category-count">142 Articles</p>
+                    <p class="category-description">Climate change, sustainability, wildlife, and environmental issues.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Education -->
+            <div class="category-card">
+                <div class="category-image">
+                    <i class="fas fa-graduation-cap category-icon"></i>
+                    <div class="category-bg-pattern"></div>
+                </div>
+                <div class="category-content">
+                    <h2>Education</h2>
+                    <p class="category-count">167 Articles</p>
+                    <p class="category-description">Academic developments, learning trends, and educational policies.</p>
+                    <button class="explore-btn">
+                        Explore <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Include Footer Component -->
+    <div id="footer-placeholder"></div>
+    
+    <!-- Floating Action Button -->
+    <div class="fab">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/navigation.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/app.js"></script>
+    <script>
+        // Load components
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header-placeholder').innerHTML = data);
+        
+        fetch('../components/breaking-news.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('breaking-news-placeholder').innerHTML = data);
+        
+        fetch('../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+        
+        // Category card click handlers
+        document.querySelectorAll('.category-card, .explore-btn').forEach(element => {
+            element.addEventListener('click', function(e) {
+                e.preventDefault();
+                const categoryName = this.querySelector('h2')?.textContent || 
+                                   this.closest('.category-card').querySelector('h2').textContent;
+                console.log('Exploring category:', categoryName);
+                // Add your navigation logic here
+            });
+        });
+    </script>
+</body>
+</html>

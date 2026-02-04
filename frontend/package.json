@@ -1,0 +1,25 @@
+{
+    "name": "newshub-frontend",
+    "version": "1.0.0",
+    "description": "NewsHub - Modern News Portal Frontend",
+    "main": "index.html",
+    "scripts": {
+      "start": "live-server --port=3000 --open=index.html",
+      "build": "echo 'Building project...'",
+      "deploy": "echo 'Deploying project...'"
+    },
+    "keywords": [
+      "news",
+      "portal",
+      "frontend",
+      "html",
+      "css",
+      "javascript"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+      "live-server": "^1.2.2"
+    },
+    "dependencies": {}
+  }

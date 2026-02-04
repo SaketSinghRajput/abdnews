@@ -1,0 +1,29 @@
+Welcome to NewsHub {{ plan_name }}!
+
+Hi {{ user_name }},
+
+Congratulations! Your subscription has been successfully activated.
+
+SUBSCRIPTION DETAILS:
+Plan: {{ plan_name }}
+Start Date: {{ start_date }}
+End Date: {{ end_date }}
+Status: Active
+
+YOUR BENEFITS:
+{% for feature in features %}
+✓ {{ feature }}
+{% endfor %}
+
+Start exploring premium content right away!
+
+Visit NewsHub: {{ site_url }}
+
+If you have any questions, feel free to reach out to our support team.
+
+Happy reading!
+The NewsHub Team
+
+---
+© 2026 NewsHub. All rights reserved.
+To manage your subscription preferences, visit your profile: {{ site_url }}/profile

@@ -1,0 +1,272 @@
+{
+  "info": {
+    "name": "NewsHub API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "NewsHub API collection with example requests and parameters."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000/api"
+    },
+    {
+      "key": "authToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Articles - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/articles/?ordering=-published_at&page_size=6",
+          "host": ["{{baseUrl}}"],
+          "path": ["articles"],
+          "query": [
+            {"key": "ordering", "value": "-published_at"},
+            {"key": "page_size", "value": "6"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Articles - Detail",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/articles/{{articleSlug}}/",
+          "host": ["{{baseUrl}}"],
+          "path": ["articles", "{{articleSlug}}"]
+        }
+      }
+    },
+    {
+      "name": "Articles - Trending",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/articles/trending/?days=7&limit=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["articles", "trending"],
+          "query": [
+            {"key": "days", "value": "7"},
+            {"key": "limit", "value": "10"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Articles - Featured",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/articles/featured/?limit=5",
+          "host": ["{{baseUrl}}"],
+          "path": ["articles", "featured"],
+          "query": [
+            {"key": "limit", "value": "5"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Articles - Most Commented",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/articles/most-commented/?limit=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["articles", "most-commented"],
+          "query": [
+            {"key": "limit", "value": "10"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Categories - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/categories/",
+          "host": ["{{baseUrl}}"],
+          "path": ["categories"]
+        }
+      }
+    },
+    {
+      "name": "Categories - Detail",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/categories/{{categorySlug}}/",
+          "host": ["{{baseUrl}}"],
+          "path": ["categories", "{{categorySlug}}"]
+        }
+      }
+    },
+    {
+      "name": "Tags - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/tags/",
+          "host": ["{{baseUrl}}"],
+          "path": ["tags"]
+        }
+      }
+    },
+    {
+      "name": "Breaking News - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/breaking-news/",
+          "host": ["{{baseUrl}}"],
+          "path": ["breaking-news"]
+        }
+      }
+    },
+    {
+      "name": "Search",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/search/?q=ai&page_size=12",
+          "host": ["{{baseUrl}}"],
+          "path": ["search"],
+          "query": [
+            {"key": "q", "value": "ai"},
+            {"key": "page_size", "value": "12"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Comments - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/comments/?article={{articleId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["comments"],
+          "query": [
+            {"key": "article", "value": "{{articleId}}"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Comments - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{authToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"article\": {{articleId}},\n  \"content\": \"Great article!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/comments/",
+          "host": ["{{baseUrl}}"],
+          "path": ["comments"]
+        }
+      }
+    },
+    {
+      "name": "Newsletter - Subscribe",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/newsletter/subscribe/",
+          "host": ["{{baseUrl}}"],
+          "path": ["newsletter", "subscribe"]
+        }
+      }
+    },
+    {
+      "name": "Newsletter - Unsubscribe",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/newsletter/unsubscribe/",
+          "host": ["{{baseUrl}}"],
+          "path": ["newsletter", "unsubscribe"]
+        }
+      }
+    },
+    {
+      "name": "Videos - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/videos/?page_size=20&is_active=true",
+          "host": ["{{baseUrl}}"],
+          "path": ["videos"],
+          "query": [
+            {"key": "page_size", "value": "20"},
+            {"key": "is_active", "value": "true"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Videos - Featured",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/videos/featured/?limit=6",
+          "host": ["{{baseUrl}}"],
+          "path": ["videos", "featured"],
+          "query": [
+            {"key": "limit", "value": "6"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Videos - Detail",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/videos/{{videoSlug}}/",
+          "host": ["{{baseUrl}}"],
+          "path": ["videos", "{{videoSlug}}"]
+        }
+      }
+    }
+  ]
+}

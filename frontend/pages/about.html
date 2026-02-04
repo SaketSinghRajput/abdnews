@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - NewsHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
+    <!-- Include Header Component -->
+    <div id="header-placeholder"></div>
+    
+    <!-- About Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-header">
+                <h1>About NewsHub</h1>
+                <p class="lead">Your Trusted Source for Breaking News and In-Depth Analysis</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Who We Are</h2>
+                    <p>NewsHub is a leading digital news platform dedicated to delivering accurate, timely, and comprehensive news coverage from around the world. Founded in 2020, we've grown to become one of the most trusted sources for breaking news, investigative journalism, and insightful analysis.</p>
+                    
+                    <h2>Our Mission</h2>
+                    <p>Our mission is to inform, engage, and empower our readers with high-quality journalism that matters. We believe in the power of truth, transparency, and the public's right to know.</p>
+                    
+                    <h2>What We Cover</h2>
+                    <ul>
+                        <li><strong>Breaking News:</strong> Real-time updates on major events worldwide</li>
+                        <li><strong>Politics:</strong> In-depth political analysis and coverage</li>
+                        <li><strong>Business:</strong> Market trends, economic insights, and financial news</li>
+                        <li><strong>Technology:</strong> Latest innovations and tech industry updates</li>
+                        <li><strong>Entertainment:</strong> Arts, culture, and entertainment news</li>
+                        <li><strong>Sports:</strong> Comprehensive sports coverage and analysis</li>
+                    </ul>
+                    
+                    <h2>Our Values</h2>
+                    <ul>
+                        <li><strong>Accuracy:</strong> We verify facts before publication</li>
+                        <li><strong>Integrity:</strong> We maintain editorial independence</li>
+                        <li><strong>Transparency:</strong> We're open about our sources and methods</li>
+                        <li><strong>Diversity:</strong> We represent multiple perspectives</li>
+                        <li><strong>Innovation:</strong> We embrace new storytelling technologies</li>
+                    </ul>
+                </div>
+                
+                <div class="team-section">
+                    <h2>Our Team</h2>
+                    <div class="team-grid">
+                        <div class="team-member">
+                            <i class="fas fa-user-circle"></i>
+                            <h3>John Smith</h3>
+                            <p>Editor-in-Chief</p>
+                        </div>
+                        <div class="team-member">
+                            <i class="fas fa-user-circle"></i>
+                            <h3>Sarah Johnson</h3>
+                            <p>Managing Editor</p>
+                        </div>
+                        <div class="team-member">
+                            <i class="fas fa-user-circle"></i>
+                            <h3>Michael Chen</h3>
+                            <p>Technology Editor</p>
+                        </div>
+                        <div class="team-member">
+                            <i class="fas fa-user-circle"></i>
+                            <h3>Emma Davis</h3>
+                            <p>Senior Reporter</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Include Footer Component -->
+    <div id="footer-placeholder"></div>
+    
+    <!-- Floating Action Button -->
+    <div class="fab">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/navigation.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/app.js"></script>
+    <script>
+        // Load header component
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            });
+        
+        // Load footer component
+        fetch('../components/footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            });
+    </script>
+</body>
+</html>

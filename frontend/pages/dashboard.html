@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NewsHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            min-height: calc(100vh - 300px);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--toi-red);
+        }
+
+        .dashboard-header h1 {
+            font-size: 32px;
+            color: var(--dark-gray);
+            margin: 0;
+        }
+
+        .dashboard-header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--toi-light-red);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: var(--toi-red);
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            color: var(--toi-red);
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            color: var(--medium-gray);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-gray);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .content-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin: 0 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--toi-red);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title a {
+            font-size: 14px;
+            color: var(--toi-red);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .reading-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .reading-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .reading-item:hover {
+            background: #f5f5f5;
+        }
+
+        .reading-item img {
+            width: 80px;
+            height: 80px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .reading-item-content {
+            flex: 1;
+        }
+
+        .reading-item-title {
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
+
+        .reading-item-category {
+            display: inline-block;
+            background: var(--toi-red);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .reading-item-meta {
+            font-size: 12px;
+            color: var(--medium-gray);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--medium-gray);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            margin: 0;
+        }
+
+        .sidebar-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-card.premium {
+            background: linear-gradient(135deg, var(--toi-light-red), #fff5f5);
+            border: 2px solid var(--toi-red);
+        }
+
+        .sidebar-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: var(--dark-gray);
+        }
+
+        .sidebar-card.premium h3 {
+            color: var(--toi-red);
+        }
+
+        .sidebar-card p {
+            margin: 0 0 12px 0;
+            font-size: 13px;
+            color: var(--medium-gray);
+            line-height: 1.6;
+        }
+
+        .sidebar-card.premium p {
+            color: var(--dark-gray);
+        }
+
+        .btn-primary {
+            background: var(--toi-red);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #a00;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: var(--dark-gray);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .subscription-badge {
+            display: inline-block;
+            background: var(--toi-red);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subscription-badge.free {
+            background: var(--medium-gray);
+        }
+
+        .quick-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--light-gray);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--dark-gray);
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .quick-link:hover {
+            background: #f0f0f0;
+            color: var(--toi-red);
+        }
+
+        .quick-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="dashboard-container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h1>Welcome back! 👋</h1>
+                    <p style="color: var(--medium-gray); margin: 5px 0 0 0;">Here's what's happening with your NewsHub account</p>
+                </div>
+                <div class="dashboard-header-info">
+                    <div class="user-badge">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="userBadge">User</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div class="stat-label">Saved Articles</div>
+                    <div class="stat-value" id="savedCount">0</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="stat-label">Reading History</div>
+                    <div class="stat-value" id="historyCount">0</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-label">Subscription Status</div>
+                    <div class="stat-value" id="subscriptionStatus" style="font-size: 16px; color: var(--toi-red);">Free</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="stat-label">Trending Now</div>
+                    <div class="stat-value" id="trendingCount">--</div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Main Content -->
+                <div>
+                    <!-- Reading List -->
+                    <div class="content-section">
+                        <h2 class="section-title">
+                            <span>Continue Reading</span>
+                            <a href="/pages/editorial.html">View All</a>
+                        </h2>
+                        <div id="readingList">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <p>Your reading list is empty</p>
+                                <p style="font-size: 12px; margin-top: 5px;">Articles you read will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Articles -->
+                    <div class="content-section" style="margin-top: 30px;">
+                        <h2 class="section-title">
+                            <span>Latest in Your Categories</span>
+                            <a href="/pages/trending.html">View All</a>
+                        </h2>
+                        <div id="latestArticles">
+                            <div class="empty-state">
+                                <i class="fas fa-newspaper"></i>
+                                <p>Loading articles...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside>
+                    <!-- Subscription Card -->
+                    <div class="sidebar-card premium" id="subscriptionCard">
+                        <div class="subscription-badge">FREE PLAN</div>
+                        <h3>Upgrade to Premium</h3>
+                        <p>Get unlimited access to all premium content, ad-free reading experience, and exclusive features.</p>
+                        <button class="btn-primary" onclick="window.location.href='/pages/account.html#subscription'">
+                            <i class="fas fa-star"></i> Upgrade Now
+                        </button>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="sidebar-card">
+                        <h3>Quick Links</h3>
+                        <div class="quick-links">
+                            <a href="/pages/account.html" class="quick-link">
+                                <i class="fas fa-user-circle"></i>
+                                My Account
+                            </a>
+                            <a href="/pages/account.html#subscription" class="quick-link">
+                                <i class="fas fa-star"></i>
+                                Manage Subscription
+                            </a>
+                            <a href="/pages/account.html#preferences" class="quick-link">
+                                <i class="fas fa-bell"></i>
+                                Notifications
+                            </a>
+                            <a href="/pages/account.html#security" class="quick-link">
+                                <i class="fas fa-lock"></i>
+                                Security
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Recommended Categories -->
+                    <div class="sidebar-card">
+                        <h3>Explore Categories</h3>
+                        <div class="quick-links" id="categoryLinks">
+                            <p style="text-align: center; color: var(--medium-gray); margin: 0;">Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="sidebar-card" style="background: linear-gradient(135deg, #f0f0f0, #fff);">
+                        <h3>📰 Stay Updated</h3>
+                        <p>Get the best stories delivered to your inbox every week</p>
+                        <button class="btn-primary">Subscribe to Newsletter</button>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer-placeholder"></footer>
+
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Check authentication
+                if (!isAuthenticated()) {
+                    window.location.href = '/pages/login.html';
+                    return;
+                }
+
+                // Load header and footer
+                const cmsData = await loadCMSData();
+                renderHeader(cmsData.siteSettings, cmsData.categories);
+                renderFooter(cmsData.footerSettings, cmsData.socialLinks);
+
+                // Load user data
+                const user = getCurrentUser();
+                document.getElementById('userBadge').textContent = user.username || 'User';
+
+                // Update subscription status
+                updateSubscriptionStatus(user);
+
+                // Load dashboard data
+                await loadDashboardData();
+
+                // Load categories
+                const categories = await fetchCategories();
+                renderCategoryLinks(categories);
+
+            } catch (error) {
+                console.error('Dashboard loading failed:', error);
+            }
+        });
+
+        function updateSubscriptionStatus(user) {
+            const card = document.getElementById('subscriptionCard');
+            const statusEl = document.getElementById('subscriptionStatus');
+
+            if (user.has_active_subscription) {
+                statusEl.textContent = 'Premium';
+                statusEl.style.color = var(--toi-red);
+                
+                card.innerHTML = `
+                    <div class="subscription-badge">PREMIUM</div>
+                    <h3>Your Premium Subscription</h3>
+                    <p>Expires on ${new Date(user.subscription_end_date).toLocaleDateString()}</p>
+                    <p>Thank you for supporting high-quality journalism!</p>
+                    <button class="btn-secondary" onclick="window.location.href='/pages/account.html#subscription'" style="width: 100%;">
+                        Manage Subscription
+                    </button>
+                `;
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                // Load recent articles
+                const articles = await fetchArticles({ 
+                    ordering: '-published_at',
+                    page_size: 5
+                });
+
+                if (articles.results && articles.results.length > 0) {
+                    renderLatestArticles(articles.results);
+                }
+
+                // Load trending articles count
+                const trending = await fetchArticles({
+                    ordering: '-views_count',
+                    page_size: 1
+                });
+                document.getElementById('trendingCount').textContent = trending.count || '0';
+
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+            }
+        }
+
+        function renderLatestArticles(articles) {
+            const container = document.getElementById('latestArticles');
+            container.innerHTML = articles.map(article => `
+                <div class="reading-item">
+                    ${article.featured_image ? `<img src="${article.featured_image}" alt="${article.title}">` : ''}
+                    <div class="reading-item-content">
+                        <div class="reading-item-category">${article.category?.name || 'News'}</div>
+                        <h3 class="reading-item-title">${article.title}</h3>
+                        <p class="reading-item-meta">
+                            <i class="fas fa-clock"></i> ${timeAgo(article.published_at)}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCategoryLinks(categories) {
+            const container = document.getElementById('categoryLinks');
+            const topCategories = categories.slice(0, 6);
+            
+            container.innerHTML = topCategories.map(cat => `
+                <a href="/pages/trending.html?category=${encodeURIComponent(cat.slug)}" class="quick-link">
+                    <i class="fas fa-tag"></i>
+                    ${cat.name}
+                </a>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

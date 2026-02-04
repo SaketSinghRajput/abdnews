@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - NewsHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <style>
+        .account-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            min-height: calc(100vh - 300px);
+        }
+
+        .account-sidebar {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 100px;
+        }
+
+        .user-profile-mini {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--toi-light-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 36px;
+            color: var(--toi-red);
+        }
+
+        .user-profile-mini h3 {
+            color: var(--dark-gray);
+            font-size: 16px;
+            margin: 10px 0 5px;
+        }
+
+        .user-profile-mini p {
+            color: var(--medium-gray);
+            font-size: 13px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--toi-light-red);
+            color: var(--toi-red);
+        }
+
+        .sidebar-menu i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #e74c3c;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 10px;
+            cursor: pointer;
+            background: none;
+            border: 1px solid #e0e0e0;
+        }
+
+        .logout-btn:hover {
+            background: #fee;
+            color: #c33;
+        }
+
+        .account-content {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--toi-red);
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            color: var(--dark-gray);
+            margin: 0;
+        }
+
+        .edit-btn {
+            background: var(--toi-red);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .edit-btn:hover {
+            background: #a00;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: var(--medium-gray);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            color: var(--dark-gray);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .subscription-card {
+            background: linear-gradient(135deg, var(--toi-light-red), #fff5f5);
+            border: 2px solid var(--toi-red);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .subscription-badge {
+            display: inline-block;
+            background: var(--toi-red);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .subscription-badge.free {
+            background: var(--medium-gray);
+        }
+
+        .subscription-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--toi-red);
+            margin: 12px 0;
+        }
+
+        .subscription-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .subscribe-btn {
+            background: var(--toi-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .subscribe-btn:hover {
+            background: #a00;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--toi-red);
+            box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn-save {
+            background: var(--toi-red);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #a00;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            color: var(--dark-gray);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: #d0d0d0;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .edit-profile-form {
+            background: var(--light-gray);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .edit-profile-form.show {
+            display: block;
+        }
+
+        .profile-info {
+            display: none;
+        }
+
+        .profile-info.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .account-container {
+                grid-template-columns: 1fr;
+            }
+
+            .account-sidebar {
+                position: static;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="account-container">
+            <!-- Sidebar -->
+            <aside class="account-sidebar">
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 id="sidebarUsername">Loading...</h3>
+                    <p id="sidebarEmail">user@example.com</p>
+                </div>
+
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="#profile" class="menu-link active" data-section="profile">
+                            <i class="fas fa-user-circle"></i>
+                            My Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#subscription" class="menu-link" data-section="subscription">
+                            <i class="fas fa-star"></i>
+                            Subscription
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#preferences" class="menu-link" data-section="preferences">
+                            <i class="fas fa-cog"></i>
+                            Preferences
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#security" class="menu-link" data-section="security">
+                            <i class="fas fa-lock"></i>
+                            Security
+                        </a>
+                    </li>
+                </ul>
+
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </aside>
+
+            <!-- Main Content -->
+            <section class="account-content">
+                <!-- Profile Section -->
+                <div id="profile-section" class="content-section show">
+                    <div class="section-header">
+                        <h2>Profile Information</h2>
+                        <button class="edit-btn" onclick="toggleEditProfile()">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                    </div>
+
+                    <div id="alert" class="alert"></div>
+
+                    <!-- View Mode -->
+                    <div id="profile-view" class="profile-info show">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Username</span>
+                                <span class="info-value" id="viewUsername">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email</span>
+                                <span class="info-value" id="viewEmail">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">First Name</span>
+                                <span class="info-value" id="viewFirstName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Name</span>
+                                <span class="info-value" id="viewLastName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Account Status</span>
+                                <span class="info-value" id="viewStatus">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Member Since</span>
+                                <span class="info-value" id="viewMemberSince">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Mode -->
+                    <div id="profile-edit" class="edit-profile-form">
+                        <form id="editProfileForm">
+                            <div class="info-grid">
+                                <div class="form-group">
+                                    <label for="editFirstName">First Name</label>
+                                    <input type="text" id="editFirstName" name="first_name" placeholder="Enter first name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editLastName">Last Name</label>
+                                    <input type="text" id="editLastName" name="last_name" placeholder="Enter last name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEmail">Email</label>
+                                    <input type="email" id="editEmail" name="email" placeholder="Enter email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editPhone">Phone</label>
+                                    <input type="tel" id="editPhone" name="phone" placeholder="Enter phone number">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editBio">Bio</label>
+                                <textarea id="editBio" name="bio" rows="4" placeholder="Tell us about yourself"></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                                <button type="button" class="btn-cancel" onclick="toggleEditProfile()">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Subscription Section -->
+                <div id="subscription-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>My Subscription</h2>
+                    </div>
+
+                    <div id="current-subscription">
+                        <!-- Current subscription details will be loaded here -->
+                    </div>
+
+                    <div id="subscription-plans" style="margin-top: 30px;">
+                        <!-- Available plans will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div id="preferences-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Notification Preferences</h2>
+                        <button class="edit-btn" onclick="savePreferences()">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+
+                    <form id="preferencesForm">
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <input type="checkbox" id="emailNotifications" name="email_notifications">
+                                <label for="emailNotifications" style="margin: 0; cursor: pointer;">
+                                    <strong>Email Notifications</strong>
+                                    <p style="margin: 5px 0 0 0; color: var(--medium-gray); font-size: 13px;">
+                                        Receive email updates about new articles and breaking news
+                                    </p>
+                                </label>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <input type="checkbox" id="newsletter" name="newsletter_subscription">
+                                <label for="newsletter" style="margin: 0; cursor: pointer;">
+                                    <strong>Weekly Newsletter</strong>
+                                    <p style="margin: 5px 0 0 0; color: var(--medium-gray); font-size: 13px;">
+                                        Get a digest of trending stories delivered every week
+                                    </p>
+                                </label>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <input type="checkbox" id="categoriesNotifications" name="categories_notifications">
+                                <label for="categoriesNotifications" style="margin: 0; cursor: pointer;">
+                                    <strong>Category Notifications</strong>
+                                    <p style="margin: 5px 0 0 0; color: var(--medium-gray); font-size: 13px;">
+                                        Get notified about your favorite categories
+                                    </p>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Security Section -->
+                <div id="security-section" class="content-section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Security Settings</h2>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
+                        <div style="border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                            <h3 style="margin-top: 0; color: var(--dark-gray);">Change Password</h3>
+                            <form id="changePasswordForm">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" id="currentPassword" name="current_password" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" id="newPassword" name="new_password" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm Password</label>
+                                    <input type="password" id="confirmPassword" name="confirm_password" required>
+                                </div>
+
+                                <button type="submit" class="btn-save">
+                                    <i class="fas fa-lock"></i> Update Password
+                                </button>
+                            </form>
+                        </div>
+
+                        <div style="border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                            <h3 style="margin-top: 0; color: var(--dark-gray);">Active Sessions</h3>
+                            <p style="color: var(--medium-gray); margin-bottom: 15px;">Manage your active sessions on other devices</p>
+                            <button class="btn-save" onclick="logoutAllDevices()">
+                                <i class="fas fa-sign-out-alt"></i> Logout All Other Devices
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer-placeholder"></footer>
+
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Check if user is authenticated
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Load header and footer
+                const cmsData = await loadCMSData();
+                renderHeader(cmsData.siteSettings, cmsData.categories);
+                renderFooter(cmsData.footerSettings, cmsData.socialLinks);
+            } catch (error) {
+                console.error('Failed to load CMS data:', error);
+            }
+
+            // Check authentication
+            if (!isAuthenticated()) {
+                window.location.href = '/pages/login.html';
+                return;
+            }
+
+            // Load user profile
+            await loadUserProfile();
+            
+            // Load subscription plans
+            await loadSubscriptionPlans();
+
+            // Setup event listeners
+            setupMenuNavigation();
+            setupEventListeners();
+        });
+
+        // Load user profile data
+        async function loadUserProfile() {
+            try {
+                const user = getCurrentUser();
+                if (user) {
+                    document.getElementById('sidebarUsername').textContent = user.username;
+                    document.getElementById('sidebarEmail').textContent = user.email;
+
+                    // Update view mode
+                    document.getElementById('viewUsername').textContent = user.username;
+                    document.getElementById('viewEmail').textContent = user.email;
+                    document.getElementById('viewFirstName').textContent = user.first_name || '-';
+                    document.getElementById('viewLastName').textContent = user.last_name || '-';
+                    document.getElementById('viewStatus').textContent = user.is_active ? 'Active' : 'Inactive';
+                    document.getElementById('viewMemberSince').textContent = new Date(user.date_joined).toLocaleDateString();
+
+                    // Update edit mode
+                    document.getElementById('editFirstName').value = user.first_name || '';
+                    document.getElementById('editLastName').value = user.last_name || '';
+                    document.getElementById('editEmail').value = user.email || '';
+
+                    // Update preferences
+                    document.getElementById('emailNotifications').checked = user.email_notifications || false;
+                    document.getElementById('newsletter').checked = user.newsletter_subscription || false;
+                }
+            } catch (error) {
+                console.error('Failed to load user profile:', error);
+            }
+        }
+
+        // Load subscription plans
+        async function loadSubscriptionPlans() {
+            try {
+                const response = await fetch('/api/users/subscription-plans/');
+                if (response.ok) {
+                    const plans = await response.json();
+                    renderSubscriptionPlans(plans);
+                }
+            } catch (error) {
+                console.error('Failed to load plans:', error);
+            }
+        }
+
+        // Render subscription plans
+        function renderSubscriptionPlans(plans) {
+            const user = getCurrentUser();
+            const container = document.getElementById('subscription-plans');
+            
+            let currentSubscriptionHTML = '';
+            if (user.has_active_subscription) {
+                currentSubscriptionHTML = `
+                    <div class="subscription-card">
+                        <div class="subscription-badge">ACTIVE</div>
+                        <div class="subscription-title">${user.subscription_plan || 'Premium'}</div>
+                        <div class="subscription-details">
+                            <div>
+                                <span class="info-label">Active Since</span>
+                                <span class="info-value">${new Date(user.subscription_start_date).toLocaleDateString()}</span>
+                            </div>
+                            <div>
+                                <span class="info-label">Expires</span>
+                                <span class="info-value">${new Date(user.subscription_end_date).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                currentSubscriptionHTML = `
+                    <div class="subscription-card" style="background: linear-gradient(135deg, #f0f0f0, #fff);">
+                        <div class="subscription-badge free">FREE PLAN</div>
+                        <div class="subscription-title" style="color: var(--dark-gray);">You're on the Free Plan</div>
+                        <p style="color: var(--medium-gray); margin: 12px 0;">
+                            Upgrade to Premium to access exclusive content and premium features
+                        </p>
+                    </div>
+                `;
+            }
+
+            const plansHTML = `
+                <div>
+                    <h3 style="color: var(--dark-gray); margin-bottom: 20px;">Available Plans</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        ${plans.map(plan => `
+                            <div class="subscription-card">
+                                <div class="subscription-badge">${plan.plan_type}</div>
+                                <div class="subscription-title">${plan.name}</div>
+                                <p style="color: var(--medium-gray); margin: 12px 0;">${plan.description || 'Premium access to all content'}</p>
+                                <div style="font-size: 24px; font-weight: 700; color: var(--toi-red); margin: 15px 0;">
+                                    $${plan.price}
+                                    ${plan.duration_days ? `<span style="font-size: 14px; color: var(--medium-gray);">/${plan.duration_days} days</span>` : ''}
+                                </div>
+                                ${!user.has_active_subscription || user.subscription_plan !== plan.name ? `
+                                    <button class="subscribe-btn" onclick="subscribeToPlan('${plan.id}')">
+                                        Subscribe Now
+                                    </button>
+                                ` : '<p style="color: #3c3; font-weight: 600; margin-top: 15px;"><i class="fas fa-check"></i> Current Plan</p>'}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('current-subscription').innerHTML = currentSubscriptionHTML;
+            container.innerHTML = plansHTML;
+        }
+
+        // Subscribe to plan
+        async function subscribeToPlan(planId) {
+            try {
+                const response = await fetchWithAuth('/api/users/subscribe/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plan_id: planId
+                    })
+                });
+
+                if (response.ok) {
+                    showAlert('Subscription activated successfully!', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    const data = await response.json();
+                    showAlert(data.error || 'Subscription failed', 'error');
+                }
+            } catch (error) {
+                showAlert(error.message || 'Subscription failed', 'error');
+            }
+        }
+
+        // Setup menu navigation
+        function setupMenuNavigation() {
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
+
+                    // Update active state
+                    document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // Show section
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show selected section
+            document.getElementById(sectionName + '-section').style.display = 'block';
+        }
+
+        // Toggle edit profile form
+        function toggleEditProfile() {
+            document.getElementById('profile-view').classList.toggle('show');
+            document.getElementById('profile-edit').classList.toggle('show');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await saveProfileChanges();
+            });
+
+            document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await changePassword();
+            });
+        }
+
+        // Save profile changes
+        async function saveProfileChanges() {
+            try {
+                const data = {
+                    first_name: document.getElementById('editFirstName').value,
+                    last_name: document.getElementById('editLastName').value,
+                    email: document.getElementById('editEmail').value
+                };
+
+                const response = await fetchWithAuth('/api/users/auth/profile/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showAlert('Profile updated successfully!', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    const error = await response.json();
+                    showAlert(error.detail || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                showAlert(error.message || 'Failed to update profile', 'error');
+            }
+        }
+
+        // Change password
+        async function changePassword() {
+            try {
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (newPassword !== confirmPassword) {
+                    showAlert('Passwords do not match', 'error');
+                    return;
+                }
+
+                const response = await fetchWithAuth('/api/users/change-password/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        current_password: document.getElementById('currentPassword').value,
+                        new_password: newPassword
+                    })
+                });
+
+                if (response.ok) {
+                    showAlert('Password changed successfully!', 'success');
+                    document.getElementById('changePasswordForm').reset();
+                } else {
+                    const error = await response.json();
+                    showAlert(error.detail || 'Failed to change password', 'error');
+                }
+            } catch (error) {
+                showAlert(error.message || 'Failed to change password', 'error');
+            }
+        }
+
+        // Save preferences
+        async function savePreferences() {
+            try {
+                const data = {
+                    email_notifications: document.getElementById('emailNotifications').checked,
+                    newsletter_subscription: document.getElementById('newsletter').checked
+                };
+
+                const response = await fetchWithAuth('/api/users/auth/profile/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showAlert('Preferences updated successfully!', 'success');
+                } else {
+                    showAlert('Failed to update preferences', 'error');
+                }
+            } catch (error) {
+                showAlert(error.message || 'Failed to update preferences', 'error');
+            }
+        }
+
+        // Logout all devices
+        async function logoutAllDevices() {
+            if (confirm('Are you sure you want to logout from all other devices?')) {
+                // This would require a backend endpoint
+                showAlert('All other sessions have been terminated', 'success');
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

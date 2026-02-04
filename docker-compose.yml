@@ -1,0 +1,20 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - backend_media:/app/media
+      - backend_db:/app/db
+    # Production: Uses Gunicorn from Dockerfile CMD
+    # Development: Uncomment line below to override with dev server
+    # command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  backend_media:
+  backend_db:

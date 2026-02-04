@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending News - NewsHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <style>
+        .trending-page {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 42px;
+            color: var(--toi-red);
+            margin-bottom: 15px;
+            font-family: var(--font-heading);
+        }
+        
+        .page-header p {
+            font-size: 18px;
+            color: var(--medium-gray);
+        }
+        
+        .trending-filter {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: var(--white);
+            border: 2px solid var(--toi-border);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--toi-red);
+            color: var(--white);
+            border-color: var(--toi-red);
+        }
+        
+        .trending-articles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .article-card {
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .article-card:hover .article-image img {
+            transform: scale(1.05);
+        }
+        
+        .trending-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--toi-red);
+            color: var(--white);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .article-body {
+            padding: 20px;
+        }
+        
+        .article-category {
+            color: var(--toi-red);
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        
+        .article-body h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: var(--dark-gray);
+        }
+        
+        .article-excerpt {
+            font-size: 14px;
+            color: var(--medium-gray);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--toi-border);
+        }
+        
+        .article-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--medium-gray);
+        }
+        
+        .article-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--medium-gray);
+        }
+        
+        .article-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        @media (max-width: 992px) {
+            .trending-articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .trending-articles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Header Component -->
+    <div id="header-placeholder"></div>
+    <div id="breaking-news-placeholder"></div>
+    
+    <!-- Trending Content -->
+    <section class="trending-page">
+        <div class="page-header">
+            <h1><i class="fas fa-fire"></i> Trending News</h1>
+            <p>Stay updated with the most popular and trending stories right now</p>
+        </div>
+        
+        <div class="trending-filter">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Technology</button>
+            <button class="filter-btn">Business</button>
+            <button class="filter-btn">Politics</button>
+            <button class="filter-btn">Sports</button>
+            <button class="filter-btn">Entertainment</button>
+        </div>
+        
+        <div class="trending-articles-grid">
+            <!-- Article 1 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1" alt="AI Technology">
+                    <span class="trending-badge">
+                        <i class="fas fa-fire"></i> Trending #1
+                    </span>
+                </div>
+                <div class="article-body">
+                    <div class="article-category">Technology</div>
+                    <h3>Revolutionary AI Technology Set to Transform Healthcare Industry</h3>
+                    <p class="article-excerpt">Artificial Intelligence is making groundbreaking strides in healthcare, promising to revolutionize patient care and medical diagnostics.</p>
+                    <div class="article-footer">
+                        <div class="article-author">
+                            <i class="fas fa-user-circle"></i> John Smith
+                        </div>
+                        <div class="article-stats">
+                            <span><i class="far fa-eye"></i> 15.2K</span>
+                            <span><i class="far fa-comment"></i> 342</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Article 2 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Stock Market">
+                    <span class="trending-badge">
+                        <i class="fas fa-fire"></i> Trending #2
+                    </span>
+                </div>
+                <div class="article-body">
+                    <div class="article-category">Business</div>
+                    <h3>Stock Markets Reach All-Time High Amid Economic Recovery</h3>
+                    <p class="article-excerpt">Global markets surge as economic indicators show strong post-pandemic recovery trends across all sectors.</p>
+                    <div class="article-footer">
+                        <div class="article-author">
+                            <i class="fas fa-user-circle"></i> Sarah Johnson
+                        </div>
+                        <div class="article-stats">
+                            <span><i class="far fa-eye"></i> 12.5K</span>
+                            <span><i class="far fa-comment"></i> 234</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Article 3 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b" alt="Space Mission">
+                    <span class="trending-badge">
+                        <i class="fas fa-fire"></i> Trending #3
+                    </span>
+                </div>
+                <div class="article-body">
+                    <div class="article-category">Science</div>
+                    <h3>New Space Mission Explores Jupiter's Moons Successfully</h3>
+                    <p class="article-excerpt">The spacecraft will study Europa's subsurface ocean for signs of extraterrestrial life in unprecedented detail.</p>
+                    <div class="article-footer">
+                        <div class="article-author">
+                            <i class="fas fa-user-circle"></i> Dr. Michael Chen
+                        </div>
+                        <div class="article-stats">
+                            <span><i class="far fa-eye"></i> 18.9K</span>
+                            <span><i class="far fa-comment"></i> 456</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Article 4 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1551836026-d5c55ac5d4c5" alt="Renewable Energy">
+                    <span class="trending-badge">
+                        <i class="fas fa-fire"></i> Trending #4
+                    </span>
+                </div>
+                <div class="article-body">
+                    <div class="article-category">Environment</div>
+                    <h3>Major Breakthrough in Renewable Energy Storage</h3>
+                    <p class="article-excerpt">Scientists develop new battery technology that could revolutionize clean energy storage worldwide.</p>
+                    <div class="article-footer">
+                        <div class="article-author">
+                            <i class="fas fa-user-circle"></i> Emma Davis
+                        </div>
+                        <div class="article-stats">
+                            <span><i class="far fa-eye"></i> 9.8K</span>
+                            <span><i class="far fa-comment"></i> 187</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Article 5 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1551135049-8a33b42738b4" alt="Film Festival">
+                    <span class="trending-badge">
+                        <i class="fas fa-fire"></i> Trending #5
+                    </span>
+                </div>
+                <div class="article-body">
+                    <div class="article-category">Entertainment</div>
+                    <h3>Film Festival Announces 2023 Award Winners</h3>
+                    <p class="article-excerpt">Independent films dominate this year's ceremony with groundbreaking storytelling and cinematography.</p>
+                    <div class="article-footer">
+                        <div class="article-author">
+                            <i class="fas fa-user-circle"></i> Alex Thompson
+                        </div>
+                        <div class="article-stats">
+                            <span><i class="far fa-eye"></i> 7.6K</span>
+                            <span><i class="far fa-comment"></i> 123</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Article 6 -->
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="https://images.unsplash.com/photo-1586227740560-8cf2732c1531" alt="Economic Policy">
+                    <span class="trending-badge">
+                        <i class="fas fa-fire"></i> Trending #6
+                    </span>
+                </div>
+                <div class="article-body">
+                    <div class="article-category">Politics</div>
+                    <h3>New Economic Policy to Boost Small Businesses</h3>
+                    <p class="article-excerpt">Government announces comprehensive support package aimed at helping small businesses recover and grow.</p>
+                    <div class="article-footer">
+                        <div class="article-author">
+                            <i class="fas fa-user-circle"></i> Robert Williams
+                        </div>
+                        <div class="article-stats">
+                            <span><i class="far fa-eye"></i> 11.3K</span>
+                            <span><i class="far fa-comment"></i> 289</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+    
+    <!-- Include Footer Component -->
+    <div id="footer-placeholder"></div>
+    
+    <!-- Floating Action Button -->
+    <div class="fab">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/navigation.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/app.js"></script>
+    <script>
+        // Load components
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header-placeholder').innerHTML = data);
+        
+        fetch('../components/breaking-news.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('breaking-news-placeholder').innerHTML = data);
+        
+        fetch('../components/footer.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('footer-placeholder').innerHTML = data);
+        
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
