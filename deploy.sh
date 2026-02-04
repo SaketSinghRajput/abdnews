@@ -40,6 +40,11 @@ fi
 DEPLOY_DIR="/var/www/newshub"
 REPO_URL="https://github.com/SaketSinghRajput/abdnews.git"
 
+# Database credentials
+DB_NAME="newshub_db"
+DB_USER="newshub_user"
+DB_PASSWORD="123456789"
+
 # Step 1: Update system packages
 log_info "Step 1: Updating system packages..."
 sudo apt update && sudo apt upgrade -y
@@ -62,33 +67,46 @@ sudo systemctl start postgresql
 sudo systemctl enable postgresql
 
 # Check if database exists
-DB_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='newshub_db'")
+DB_EXISTS=$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")
 if [ "$DB_EXISTS" != "1" ]; then
     log_info "Creating database and user..."
     sudo -u postgres psql << EOF
-CREATE DATABASE newshub_db;
-CREATE USER newshub_user WITH PASSWORD 'NewsHub@2026!Secure';
-ALTER ROLE newshub_user SET client_encoding TO 'utf8';
-ALTER ROLE newshub_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE newshub_user SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE newshub_db TO newshub_user;
+CREATE DATABASE $DB_NAME;
+CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';
+ALTER ROLE $DB_USER SET client_encoding TO 'utf8';
+ALTER ROLE $DB_USER SET default_transaction_isolation TO 'read committed';
+ALTER ROLE $DB_USER SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 EOF
     log_info "Database created successfully"
 else
-    log_warn "Database already exists"
+    log_warn "Database already exists, using existing database: $DB_NAME"
 fi
 
 # Step 4: Clone repository
 log_info "Step 4: Setting up application directory..."
-if [ ! -d "$DEPLOY_DIR" ]; then
-    sudo mkdir -p $DEPLOY_DIR
-    sudo chown $USER:$USER $DEPLOY_DIR
-    log_info "Cloning repository..."
-    git clone $REPO_URL $DEPLOY_DIR
-else
-    log_warn "Directory exists. Pulling latest changes..."
+
+# Check if we're already in a git repo or need to clone
+if [ -d "$DEPLOY_DIR/.git" ]; then
+    log_warn "Git repository exists. Pulling latest changes..."
     cd $DEPLOY_DIR
     git pull origin main
+elif [ -d "$DEPLOY_DIR/abdnews/.git" ]; then
+    log_warn "Repository found in subdirectory. Moving files..."
+    cd $DEPLOY_DIR/abdnews
+    git pull origin main
+    cd $DEPLOY_DIR
+elif [ -d "$DEPLOY_DIR" ] && [ "$(ls -A $DEPLOY_DIR)" ]; then
+    log_warn "Directory exists but no git repo found. Backing up and cloning fresh..."
+    sudo mv $DEPLOY_DIR $DEPLOY_DIR.backup.$(date +%Y%m%d_%H%M%S)
+    sudo mkdir -p $DEPLOY_DIR
+    sudo chown $USER:$USER $DEPLOY_DIR
+    git clone $REPO_URL $DEPLOY_DIR
+else
+    log_info "Cloning repository..."
+    sudo mkdir -p $DEPLOY_DIR
+    sudo chown $USER:$USER $DEPLOY_DIR
+    git clone $REPO_URL $DEPLOY_DIR
 fi
 
 cd $DEPLOY_DIR
@@ -121,9 +139,9 @@ if [ ! -f ".env" ]; then
 DEBUG=False
 SECRET_KEY=$(python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
 ALLOWED_HOSTS=*
-DATABASE_NAME=newshub_db
-DATABASE_USER=newshub_user
-DATABASE_PASSWORD=NewsHub@2026!Secure
+DATABASE_NAME=$DB_NAME
+DATABASE_USER=$DB_USER
+DATABASE_PASSWORD=$DB_PASSWORD
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
 EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
