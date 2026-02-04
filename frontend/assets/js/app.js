@@ -1,5 +1,34 @@
 // app.js - Dynamic data rendering for NewsHub frontend
 
+// Update authentication buttons in header
+function updateAuthButtons() {
+    const authButtonsContainer = document.getElementById('authButtons');
+    if (!authButtonsContainer) return;
+    
+    const isAuth = typeof isAuthenticated === 'function' && isAuthenticated();
+    const currentUser = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+    
+    if (isAuth && currentUser) {
+        authButtonsContainer.innerHTML = `
+            <a href="/pages/dashboard.html" style="color: var(--dark-gray); text-decoration: none; font-weight: 500; margin-right: 15px;">
+                <i class="fas fa-user"></i> ${currentUser.username}
+            </a>
+            <button onclick="logout()" style="background: var(--toi-red); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Logout
+            </button>
+        `;
+    } else {
+        authButtonsContainer.innerHTML = `
+            <a href="/pages/login.html" style="color: var(--dark-gray); text-decoration: none; font-weight: 600; padding: 8px 16px;">
+                Login
+            </a>
+            <a href="/pages/signup.html" style="background: var(--toi-red); color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: 600;">
+                Sign Up
+            </a>
+        `;
+    }
+}
+
 function waitForElement(selector, timeout = 5000) {
     return new Promise((resolve, reject) => {
         const start = Date.now();
