@@ -92,10 +92,10 @@ if [ -d "$DEPLOY_DIR/.git" ]; then
     cd $DEPLOY_DIR
     git pull origin main
 elif [ -d "$DEPLOY_DIR/abdnews/.git" ]; then
-    log_warn "Repository found in subdirectory. Moving files..."
-    cd $DEPLOY_DIR/abdnews
-    git pull origin main
+    log_warn "Repository found in subdirectory. Using abdnews as deploy directory..."
+    DEPLOY_DIR="$DEPLOY_DIR/abdnews"
     cd $DEPLOY_DIR
+    git pull origin main
 elif [ -d "$DEPLOY_DIR" ] && [ "$(ls -A $DEPLOY_DIR)" ]; then
     log_warn "Directory exists but no git repo found. Backing up and cloning fresh..."
     sudo mv $DEPLOY_DIR $DEPLOY_DIR.backup.$(date +%Y%m%d_%H%M%S)
