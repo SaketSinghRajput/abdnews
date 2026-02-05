@@ -18,7 +18,7 @@ django.setup()
 
 from django.contrib.auth import get_user_model
 from apps.news.models import Article, Category
-from apps.users.models import SubscriptionPlan, UserSubscription
+from apps.users.models import SubscriptionPlan, UserSubscription, Author
 
 User = get_user_model()
 
@@ -175,6 +175,16 @@ def create_demo_users():
             print(f"  ✓ Created user: {user.username} (password: {default_password})")
         else:
             print(f"  - User already exists: {user.username}")
+        
+        # Create Author profile for staff members (journalists, editors)
+        if user.is_staff and not hasattr(user, 'author_profile'):
+            Author.objects.get_or_create(
+                user=user,
+                defaults={
+                    'bio': f'Experienced journalist at NewsHub covering various topics.',
+                    'designation': 'Staff Writer' if user.role == 'journalist' else user.role.capitalize(),
+                }
+            )
         
         created_users.append(user)
     
@@ -458,8 +468,9 @@ Sequel announcements are expected soon, with the studio already developing an ex
         # Find category
         category = next((c for c in categories if c.slug == article_data['category']), categories[0])
         
-        # Random author from journalists
-        author = random.choice(journalists)
+        # Random author from journalists/staff
+        journalist_user = random.choice(journalists)
+        author = journalist_user.author_profile
         
         # Published date between 7 days ago and now
         published_at = datetime.now() - timedelta(days=random.randint(0, 7), hours=random.randint(0, 23))
