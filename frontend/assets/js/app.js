@@ -1240,6 +1240,10 @@ function closeVideoModal() {
     }
 }
 
+// Make functions globally accessible
+window.openVideoModal = openVideoModal;
+window.closeVideoModal = closeVideoModal;
+
 function createVideoModal() {
     const modal = document.createElement('div');
     modal.id = 'videoModal';
