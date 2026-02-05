@@ -1048,8 +1048,8 @@ async function loadVideosPage() {
     try {
         // Load featured videos and all videos
         const [featuredData, allVideosData] = await Promise.all([
-            apiGet('/videos/featured/', { limit: 1 }),
-            apiGet('/videos/', { page_size: 20, is_active: 'true' })
+            apiGet('/news/videos/featured/', { limit: 1 }),
+            apiGet('/news/videos/', { page_size: 20, is_active: 'true' })
         ]);
 
         const featured = featuredData.results && featuredData.results.length > 0 ? featuredData.results[0] : null;
@@ -1127,7 +1127,7 @@ function renderVideoGrid(videos) {
 // Homepage Featured Videos Carousel
 async function loadFeaturedVideosCarousel() {
     try {
-        const featuredVideosData = await apiGet('/videos/featured/', { limit: 10 });
+        const featuredVideosData = await apiGet('/news/videos/featured/', { limit: 10 });
         const videos = featuredVideosData.results || featuredVideosData || [];
         
         if (!videos.length) {
