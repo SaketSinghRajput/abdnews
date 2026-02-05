@@ -17,7 +17,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 from django.contrib.auth import get_user_model
-from apps.articles.models import Article, Category
+from apps.news.models import Article, Category
 from apps.users.models import SubscriptionPlan, UserSubscription
 
 User = get_user_model()
