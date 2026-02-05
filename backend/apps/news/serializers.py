@@ -15,12 +15,39 @@ User = get_user_model()
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Serializer for Category model with article count"""
+    """Serializer for Category model with article count and subcategories"""
+    subcategories = serializers.SerializerMethodField()
+    parent_name = serializers.CharField(source='parent.name', read_only=True)
     
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'icon', 'description', 'article_count']
-        read_only_fields = ['id', 'slug', 'article_count']
+        fields = ['id', 'name', 'slug', 'parent', 'parent_name', 'icon', 'color', 'description', 
+                  'article_count', 'is_active', 'order', 'subcategories', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'slug', 'article_count', 'created_at', 'updated_at']
+    
+    def get_subcategories(self, obj):
+        """Get active subcategories"""
+        if hasattr(obj, 'subcategories'):
+            subcats = obj.subcategories.filter(is_active=True).order_by('order', 'name')
+            return CategorySerializer(subcats, many=True, context=self.context).data
+        return []
+
+
+class CategoryTreeSerializer(serializers.ModelSerializer):
+    """Serializer for hierarchical category tree"""
+    subcategories = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'slug', 'icon', 'color', 'description', 
+                  'article_count', 'order', 'subcategories']
+    
+    def get_subcategories(self, obj):
+        """Recursively get subcategories"""
+        if hasattr(obj, 'subcategories'):
+            subcats = obj.subcategories.filter(is_active=True).order_by('order', 'name')
+            return CategoryTreeSerializer(subcats, many=True, context=self.context).data
+        return []
 
 
 class TagSerializer(serializers.ModelSerializer):

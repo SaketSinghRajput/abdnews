@@ -8,7 +8,7 @@ breaking news, comments, newsletter subscriptions, and search functionality.
 from rest_framework import generics, status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAdminUser
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q, Count
@@ -18,6 +18,7 @@ from .serializers import (
     ArticleListSerializer,
     ArticleDetailSerializer,
     CategorySerializer,
+    CategoryTreeSerializer,
     TagSerializer,
     CommentSerializer,
     BreakingNewsSerializer,
@@ -194,12 +195,30 @@ class FeaturedArticlesView(generics.ListAPIView):
 
 class CategoryListView(generics.ListAPIView):
     """
-    List all categories with article counts.
+    List all active categories with article counts.
+    Public endpoint - returns only active categories.
     """
     
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]
-    queryset = Category.objects.all().order_by('name')
+    
+    def get_queryset(self):
+        # Return only active main categories (no parent) and their active subcategories
+        return Category.objects.filter(is_active=True).order_by('order', 'name')
+
+
+class CategoryTreeView(generics.ListAPIView):
+    """
+    Get hierarchical category tree with all subcategories.
+    Public endpoint for navigation menus.
+    """
+    
+    serializer_class = CategoryTreeSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        # Return only top-level active categories
+        return Category.objects.filter(parent__isnull=True, is_active=True).order_by('order', 'name')
 
 
 class CategoryDetailView(generics.RetrieveAPIView):
@@ -210,7 +229,98 @@ class CategoryDetailView(generics.RetrieveAPIView):
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]
     lookup_field = 'slug'
+    
+    def get_queryset(self):
+        return Category.objects.filter(is_active=True)
+
+
+# Admin-only Category Management Views
+class CategoryManageListCreateView(generics.ListCreateAPIView):
+    """
+    Admin-only: List all categories (including inactive) and create new ones.
+    """
+    
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUser]
+    queryset = Category.objects.all().order_by('order', 'name')
+    
+    def perform_create(self, serializer):
+        """Create category and return success message"""
+        category = serializer.save()
+        return Response({
+            'message': 'Category created successfully',
+            'category': CategorySerializer(category).data
+        }, status=status.HTTP_201_CREATED)
+
+
+class CategoryManageDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Admin-only: Retrieve, update, or delete a specific category.
+    """
+    
+    serializer_class = CategorySerializer
+    permission_classes = [IsAdminUser]
     queryset = Category.objects.all()
+    lookup_field = 'id'
+    
+    def perform_update(self, serializer):
+        """Update category"""
+        serializer.save()
+    
+    def destroy(self, request, *args, **kwargs):
+        """Delete category with validation"""
+        category = self.get_object()
+        
+        # Check if category has articles
+        if category.article_count > 0:
+            return Response({
+                'error': f'Cannot delete category with {category.article_count} articles. Reassign articles first.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if category has subcategories
+        if category.subcategories.exists():
+            return Response({
+                'error': 'Cannot delete category with subcategories. Delete subcategories first.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        category.delete()
+        return Response({
+            'message': 'Category deleted successfully'
+        }, status=status.HTTP_200_OK)
+
+
+class CategoryReorderView(APIView):
+    """
+    Admin-only: Reorder categories by updating their order field.
+    """
+    
+    permission_classes = [IsAdminUser]
+    
+    def post(self, request):
+        """
+        Expect: { "categories": [{"id": 1, "order": 0}, {"id": 2, "order": 1}, ...] }
+        """
+        categories_data = request.data.get('categories', [])
+        
+        if not categories_data:
+            return Response({'error': 'No categories provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        updated_count = 0
+        for cat_data in categories_data:
+            try:
+                category = Category.objects.get(id=cat_data['id'])
+                category.order = cat_data['order']
+                category.save(update_fields=['order'])
+                updated_count += 1
+            except Category.DoesNotExist:
+                continue
+            except KeyError:
+                continue
+        
+        return Response({
+            'message': f'Successfully reordered {updated_count} categories',
+            'updated': updated_count
+        }, status=status.HTTP_200_OK)
 
 
 class TagListView(generics.ListAPIView):

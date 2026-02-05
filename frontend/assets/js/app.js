@@ -9,10 +9,16 @@ function updateAuthButtons() {
     const currentUser = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     
     if (isAuth && currentUser) {
+        const isAdmin = currentUser.is_staff || currentUser.is_superuser;
         authButtonsContainer.innerHTML = `
             <a href="/pages/dashboard.html" style="color: var(--dark-gray); text-decoration: none; font-weight: 500; margin-right: 15px;">
                 <i class="fas fa-user"></i> ${currentUser.username}
             </a>
+            ${isAdmin ? `
+            <a href="/pages/admin-categories.html" style="color: var(--primary-color); text-decoration: none; font-weight: 500; margin-right: 15px;">
+                <i class="fas fa-cog"></i> Manage Categories
+            </a>
+            ` : ''}
             <button onclick="logout()" style="background: var(--toi-red); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">
                 Logout
             </button>

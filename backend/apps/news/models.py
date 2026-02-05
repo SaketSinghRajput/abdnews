@@ -22,11 +22,11 @@ class Category(models.Model):
     """
     Category model for organizing articles into different sections
     (e.g., Politics, Sports, Technology, Business).
+    Supports hierarchical subcategories.
     """
     
     name = models.CharField(
         max_length=100,
-        unique=True,
         help_text='Category name'
     )
     slug = models.SlugField(
@@ -34,12 +34,25 @@ class Category(models.Model):
         blank=True,
         help_text='URL-friendly version of name (auto-generated)'
     )
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='subcategories',
+        blank=True,
+        null=True,
+        help_text='Parent category (leave blank for main category)'
+    )
     icon = models.ImageField(
         upload_to=category_icon_upload_path,
         blank=True,
         null=True,
         validators=[validate_category_icon],
         help_text='Category icon image'
+    )
+    color = models.CharField(
+        max_length=7,
+        default='#3b82f6',
+        help_text='Category color in hex format (e.g., #3b82f6)'
     )
     description = models.TextField(
         blank=True,
@@ -50,26 +63,45 @@ class Category(models.Model):
         editable=False,
         help_text='Number of published articles in this category'
     )
+    is_active = models.BooleanField(
+        default=True,
+        help_text='Whether this category is active and visible'
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        help_text='Display order (lower numbers appear first)'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        ordering = ['name']
+        ordering = ['order', 'name']
         verbose_name = _('Category')
         verbose_name_plural = _('Categories')
+        unique_together = [['parent', 'name']]
     
     def __str__(self):
+        if self.parent:
+            return f"{self.parent.name} > {self.name}"
         return self.name
     
     def save(self, *args, **kwargs):
         """Auto-generate unique slug from name if not provided"""
         if not self.slug:
-            self.slug = generate_unique_slug(self, self.name)
+            base_slug = self.name if not self.parent else f"{self.parent.name}-{self.name}"
+            self.slug = generate_unique_slug(self, base_slug)
         super().save(*args, **kwargs)
     
     def get_absolute_url(self):
         """Return the frontend URL for this category"""
         return f'/categories/{self.slug}/'
+    
+    def get_all_subcategories(self):
+        """Recursively get all subcategories"""
+        subcats = list(self.subcategories.filter(is_active=True))
+        for subcat in list(subcats):
+            subcats.extend(subcat.get_all_subcategories())
+        return subcats
 
 
 class Tag(models.Model):

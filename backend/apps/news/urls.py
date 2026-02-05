@@ -9,7 +9,11 @@ from .views import (
     TrendingArticlesView,
     FeaturedArticlesView,
     CategoryListView,
+    CategoryTreeView,
     CategoryDetailView,
+    CategoryManageListCreateView,
+    CategoryManageDetailView,
+    CategoryReorderView,
     TagListView,
     BreakingNewsListView,
     SearchView,
@@ -32,9 +36,15 @@ urlpatterns = [
     path('articles/', ArticleListView.as_view(), name='article-list'),
     path('articles/<slug:slug>/', ArticleDetailView.as_view(), name='article-detail'),
     
-    # Category endpoints
+    # Category endpoints - Public
     path('categories/', CategoryListView.as_view(), name='category-list'),
+    path('categories/tree/', CategoryTreeView.as_view(), name='category-tree'),
     path('categories/<slug:slug>/', CategoryDetailView.as_view(), name='category-detail'),
+    
+    # Category endpoints - Admin only
+    path('admin/categories/', CategoryManageListCreateView.as_view(), name='category-manage-list'),
+    path('admin/categories/reorder/', CategoryReorderView.as_view(), name='category-reorder'),
+    path('admin/categories/<int:id>/', CategoryManageDetailView.as_view(), name='category-manage-detail'),
     
     # Tag endpoints
     path('tags/', TagListView.as_view(), name='tag-list'),

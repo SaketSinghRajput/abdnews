@@ -14,34 +14,125 @@ class CommentInline(admin.TabularInline):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-	list_display = ['name', 'slug', 'get_article_count', 'icon', 'created_at']
-	list_filter = ['created_at']
-	search_fields = ['name', 'description']
+	list_display = ['name', 'get_parent', 'slug', 'get_article_count', 'color_preview', 'is_active', 'order', 'created_at']
+	list_filter = ['is_active', 'parent', 'created_at']
+	search_fields = ['name', 'description', 'slug']
 	prepopulated_fields = {'slug': ('name',)}
-	readonly_fields = ['article_count', 'created_at', 'updated_at']
+	readonly_fields = ['article_count', 'created_at', 'updated_at', 'get_subcategories', 'icon_preview']
+	list_editable = ['is_active', 'order']
+	list_per_page = 50
+	ordering = ['order', 'name']
+	actions = ['activate_categories', 'deactivate_categories', 'move_to_top']
+	
 	fieldsets = (
 		('Basic Information', {
-			'fields': ('name', 'slug', 'icon')
+			'fields': ('name', 'slug', 'parent')
 		}),
-		('Description', {
-			'fields': ('description',)
+		('Visual Design', {
+			'fields': ('icon', 'icon_preview', 'color', 'color_preview')
 		}),
-		('Statistics', {
-			'fields': ('article_count', 'created_at', 'updated_at')
+		('Settings', {
+			'fields': ('is_active', 'order', 'description')
+		}),
+		('Statistics & Relations', {
+			'fields': ('article_count', 'get_subcategories', 'created_at', 'updated_at'),
+			'classes': ('collapse',)
 		}),
 	)
+
+	def get_parent(self, obj):
+		"""Display parent category name with link"""
+		if obj.parent:
+			return format_html(
+				'<a href="/admin/news/category/{}/change/">{}</a>',
+				obj.parent.id,
+				obj.parent.name
+			)
+		return format_html('<span style="color:#999;">— Main Category —</span>')
+	get_parent.short_description = 'Parent Category'
 
 	def get_article_count(self, obj):
 		"""Return article count with colored styling for quick scanning."""
 		count = obj.article_count
 		if count > 10:
-			color = 'green'
+			color = '#10b981'
+			icon = '📈'
 		elif 5 <= count <= 10:
-			color = 'orange'
+			color = '#f59e0b'
+			icon = '📊'
 		else:
-			color = 'red'
-		return format_html('<span style="color:{};">{}</span>', color, count)
+			color = '#ef4444'
+			icon = '📉'
+		return format_html(
+			'<span style="color:{}; font-weight:600;">{} {}</span>',
+			color, icon, count
+		)
 	get_article_count.short_description = 'Articles'
+
+	def color_preview(self, obj):
+		"""Display color preview swatch with hex code"""
+		return format_html(
+			'<div style="display:flex;align-items:center;gap:8px;">'
+			'<div style="width:24px;height:24px;background-color:{};border:2px solid #e5e7eb;border-radius:4px;"></div>'
+			'<code style="font-size:11px;">{}</code>'
+			'</div>',
+			obj.color, obj.color
+		)
+	color_preview.short_description = 'Color'
+
+	def icon_preview(self, obj):
+		"""Display icon preview"""
+		if obj.icon:
+			return format_html(
+				'<img src="{}" style="max-width:100px;max-height:100px;border-radius:4px;border:1px solid #e5e7eb;" />',
+				obj.icon.url
+			)
+		return format_html('<span style="color:#999;">No icon uploaded</span>')
+	icon_preview.short_description = 'Icon Preview'
+
+	def get_subcategories(self, obj):
+		"""Display list of subcategories"""
+		subcats = obj.subcategories.all().order_by('order', 'name')
+		if not subcats:
+			return format_html('<span style="color:#999;">No subcategories</span>')
+		
+		links = []
+		for subcat in subcats:
+			status = '✓' if subcat.is_active else '✗'
+			color = '#10b981' if subcat.is_active else '#ef4444'
+			links.append(
+				'<a href="/admin/news/category/{}/change/" style="color:{};">{} {}</a>'.format(
+					subcat.id, color, status, subcat.name
+				)
+			)
+		return format_html(' • '.join(links))
+	get_subcategories.short_description = 'Subcategories'
+
+	def get_queryset(self, request):
+		"""Optimize queryset with select_related"""
+		qs = super().get_queryset(request)
+		return qs.select_related('parent').prefetch_related('subcategories')
+
+	# Admin actions
+	def activate_categories(self, request, queryset):
+		"""Activate selected categories"""
+		updated = queryset.update(is_active=True)
+		self.message_user(request, f'{updated} category(ies) activated successfully.')
+	activate_categories.short_description = 'Activate selected categories'
+
+	def deactivate_categories(self, request, queryset):
+		"""Deactivate selected categories"""
+		updated = queryset.update(is_active=False)
+		self.message_user(request, f'{updated} category(ies) deactivated successfully.')
+	deactivate_categories.short_description = 'Deactivate selected categories'
+
+	def move_to_top(self, request, queryset):
+		"""Move selected categories to top of the list"""
+		for category in queryset:
+			category.order = 0
+			category.save(update_fields=['order'])
+		self.message_user(request, f'{queryset.count()} category(ies) moved to top.')
+	move_to_top.short_description = 'Move to top of list'
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -319,6 +410,7 @@ class VideoAdmin(admin.ModelAdmin):
 
 
 
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Comment, CommentAdmin)
