@@ -627,6 +627,9 @@ async function loadHomePage() {
             renderPlaceholderContent();
         }
 
+        // Load and render featured videos
+        loadFeaturedVideosCarousel();
+
         // Render ads in various positions
         renderAds(ads, 'header');
         renderAds(ads, 'content');
@@ -1119,6 +1122,88 @@ function renderVideoGrid(videos) {
             </div>
         `;
     }).join('');
+}
+
+// Homepage Featured Videos Carousel
+async function loadFeaturedVideosCarousel() {
+    try {
+        const featuredVideosData = await apiGet('/videos/featured/', { limit: 10 });
+        const videos = featuredVideosData.results || featuredVideosData || [];
+        
+        if (!videos.length) {
+            console.log('No featured videos available');
+            return;
+        }
+
+        renderFeaturedVideosCarousel(videos);
+        initVideoCarousel();
+    } catch (error) {
+        console.warn('Failed to load featured videos:', error.message);
+    }
+}
+
+function renderFeaturedVideosCarousel(videos) {
+    const carouselTrack = document.querySelector('.featured-videos-carousel .carousel-track');
+    if (!carouselTrack) return;
+
+    carouselTrack.innerHTML = videos.map(video => {
+        const thumbnail = resolveMediaUrl(video.featured_image) || resolveMediaUrl(video.thumbnail) || 'https://via.placeholder.com/400x300?text=Video';
+        const videoUrl = video.video_url || '#';
+        
+        return `
+            <div class="video-card" style="min-width: 280px; flex-shrink: 0; background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.3s;" data-video-url="${videoUrl}">
+                <div class="video-thumb" style="position: relative; height: 180px; overflow: hidden;">
+                    <img src="${thumbnail}" alt="${video.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div class="video-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); display: flex; align-items: flex-end; padding: 15px;">
+                        <div style="color: white;">
+                            <h4 style="font-size: 14px; font-weight: 600; margin: 0; line-height: 1.3;">${video.title}</h4>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px; font-size: 12px;">
+                                <span><i class="far fa-clock"></i> ${video.duration || '0:00'}</span>
+                                <span><i class="far fa-eye"></i> ${video.views_count?.toLocaleString() || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="play-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; transition: opacity 0.3s;">
+                        <i class="fas fa-play-circle" style="font-size: 48px; color: white;"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function initVideoCarousel() {
+    const track = document.querySelector('.featured-videos-carousel .carousel-track');
+    const prevBtn = document.querySelector('.featured-videos-carousel .carousel-nav.prev');
+    const nextBtn = document.querySelector('.featured-videos-carousel .carousel-nav.next');
+    
+    if (!track) return;
+
+    const scrollAmount = 300;
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+    }
+
+    // Video card click handlers
+    const videoCards = track.querySelectorAll('.video-card');
+    videoCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const videoUrl = this.dataset.videoUrl;
+            if (videoUrl && videoUrl !== '#') {
+                // Open video in new tab or modal
+                window.open(videoUrl, '_blank');
+            }
+        });
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
