@@ -65,14 +65,25 @@ class LoginView(APIView):
             user = serializer.validated_data['user']
             refresh = RefreshToken.for_user(user)
             
-            return Response({
+            # Determine redirect URL for admin users
+            redirect_url = None
+            if user.is_staff or user.is_superuser:
+                redirect_url = '/admin/'
+            
+            response_data = {
                 'message': 'Login successful',
                 'user': UserSerializer(user).data,
                 'tokens': {
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                 }
-            }, status=status.HTTP_200_OK)
+            }
+            
+            # Add redirect URL for admin users
+            if redirect_url:
+                response_data['redirect_url'] = redirect_url
+            
+            return Response(response_data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

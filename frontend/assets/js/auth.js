@@ -130,6 +130,17 @@ async function login(username, password) {
             setAuthState(data.user);
             setTokens(data.tokens);
             
+            // Check if admin user needs to be redirected
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+                return {
+                    success: true,
+                    user: data.user,
+                    message: data.message,
+                    redirect: true
+                };
+            }
+            
             return {
                 success: true,
                 user: data.user,

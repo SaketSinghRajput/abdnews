@@ -228,3 +228,7 @@ SERVER_EMAIL = config('SERVER_EMAIL', default='server@newshub.com')
 
 # Site URL
 SITE_URL = config('SITE_URL', default='http://127.0.0.1:8000')
+
+# Django Admin Login Redirect
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/'

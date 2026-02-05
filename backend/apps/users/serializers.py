@@ -17,9 +17,10 @@ class UserSerializer(serializers.ModelSerializer):
             'role', 'phone_number', 'date_joined', 'is_subscribed',
             'subscription_start', 'subscription_end', 'has_active_subscription',
             'email_notifications', 'newsletter_subscription', 'is_active',
-            'subscription_plan', 'subscription_start_date', 'subscription_end_date'
+            'subscription_plan', 'subscription_start_date', 'subscription_end_date',
+            'is_staff', 'is_superuser'
         ]
-        read_only_fields = ['id', 'date_joined', 'is_subscribed', 'subscription_start', 'subscription_end', 'is_active']
+        read_only_fields = ['id', 'date_joined', 'is_subscribed', 'subscription_start', 'subscription_end', 'is_active', 'is_staff', 'is_superuser']
     
     def get_subscription_plan(self, obj):
         """Get the current subscription plan name"""

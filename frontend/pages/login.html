@@ -341,8 +341,14 @@
                 if (result.success) {
                     showAlert('Login successful! Redirecting...', 'success');
                     
-                    // Check if admin
-                    if (result.user.role === 'admin') {
+                    // Check if redirect is handled by auth.js
+                    if (result.redirect) {
+                        // Redirect is handled in auth.js for admin users
+                        return;
+                    }
+                    
+                    // Check if admin user (staff or admin role)
+                    if (result.user.role === 'admin' || result.user.is_staff) {
                         // Redirect to admin panel
                         setTimeout(() => {
                             window.location.href = '/admin/';
