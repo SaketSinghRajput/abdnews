@@ -27,7 +27,20 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    
 }
+.header-top{
+    display:flex;
+    justify-content:center;  
+    align-items:center;       
+    padding:10px 0;
+}
+
+.logo img{
+    height:10px;   /* 70–100px is ideal */
+    display:block;
+}
+
 
 .header-container {
     display: flex;
@@ -38,11 +51,6 @@ header {
     padding: 0 20px;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
 
 .logo h1 {
     font-size: 28px;
