@@ -39,8 +39,8 @@ cd $DEPLOY_DIR
 
 # Activate virtual environment
 log_info "Activating virtual environment..."
-if [ -f "venv/bin/activate" ]; then
-    source venv/bin/activate
+if [ -f "/venv/bin/activate" ]; then
+    source /venv/bin/activate
 else
     log_warn "Virtual environment not found at venv/bin/activate"
     exit 1
