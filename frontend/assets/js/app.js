@@ -1097,9 +1097,9 @@ function renderVideoGrid(videos) {
     }
 
     grid.innerHTML = videos.map((video, index) => {
-        const thumbnail = resolveMediaUrl(video.featured_image) || 'https://via.placeholder.com/400x300?text=Video';
+        const thumbnail = resolveMediaUrl(video.featured_image) || resolveMediaUrl(video.thumbnail) || 'https://via.placeholder.com/400x300?text=Video';
         return `
-            <div class="video-card">
+            <div class="video-card" style="cursor: pointer;" data-video-url="${video.video_url || '#'}" onclick="if(this.dataset.videoUrl !== '#') openVideoModal(this.dataset.videoUrl)">
                 <div class="video-thumbnail">
                     <img src="${thumbnail}" alt="${video.title}" loading="lazy">
                     <span class="video-duration">${video.duration || '00:00'}</span>
@@ -1199,11 +1199,119 @@ function initVideoCarousel() {
         card.addEventListener('click', function() {
             const videoUrl = this.dataset.videoUrl;
             if (videoUrl && videoUrl !== '#') {
-                // Open video in new tab or modal
-                window.open(videoUrl, '_blank');
+                // Open video in modal
+                openVideoModal(videoUrl);
             }
         });
     });
+}
+
+// Video Modal Functions
+function openVideoModal(videoUrl) {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('videoModal');
+    if (!modal) {
+        modal = createVideoModal();
+    }
+
+    // Convert video URL to embed format
+    const embedUrl = convertToEmbedUrl(videoUrl);
+
+    // Set iframe src
+    const iframe = modal.querySelector('iframe');
+    if (iframe) {
+        iframe.src = embedUrl;
+    }
+
+    // Show modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeVideoModal() {
+    const modal = document.getElementById('videoModal');
+    if (modal) {
+        const iframe = modal.querySelector('iframe');
+        if (iframe) {
+            iframe.src = ''; // Stop video playback
+        }
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function createVideoModal() {
+    const modal = document.createElement('div');
+    modal.id = 'videoModal';
+    modal.style.cssText = `
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        align-items: center;
+        justify-content: center;
+    `;
+
+    modal.innerHTML = `
+        <div style="position: relative; width: 90%; max-width: 1200px; aspect-ratio: 16/9;">
+            <button onclick="closeVideoModal()" style="position: absolute; top: -40px; right: 0; background: transparent; border: none; color: white; font-size: 36px; cursor: pointer; z-index: 10001;">
+                <i class="fas fa-times"></i>
+            </button>
+            <iframe 
+                style="width: 100%; height: 100%; border: none; border-radius: 8px;" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    `;
+
+    // Close on background click
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeVideoModal();
+        }
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeVideoModal();
+        }
+    });
+
+    document.body.appendChild(modal);
+    return modal;
+}
+
+function convertToEmbedUrl(url) {
+    // YouTube
+    if (url.includes('youtube.com/watch')) {
+        const videoId = new URL(url).searchParams.get('v');
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+    if (url.includes('youtu.be/')) {
+        const videoId = url.split('youtu.be/')[1].split('?')[0];
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+
+    // Vimeo
+    if (url.includes('vimeo.com/')) {
+        const videoId = url.split('vimeo.com/')[1].split('?')[0];
+        return `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+    }
+
+    // Dailymotion
+    if (url.includes('dailymotion.com/video/')) {
+        const videoId = url.split('dailymotion.com/video/')[1].split('?')[0];
+        return `https://www.dailymotion.com/embed/video/${videoId}?autoplay=1`;
+    }
+
+    // If already an embed URL or unknown format, return as is
+    return url;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
