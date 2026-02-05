@@ -67,7 +67,7 @@ def create_subscription_plans():
             'description': 'Basic access to news articles with limited features',
             'includes_email_notifications': False,
             'includes_newsletter': False,
-            'max_articles_per_month': 10,
+            'features': ['Basic access', 'Limited articles'],
         },
         {
             'name': 'Premium Monthly',
@@ -77,7 +77,7 @@ def create_subscription_plans():
             'description': 'Full access to all articles, videos, and premium content',
             'includes_email_notifications': True,
             'includes_newsletter': True,
-            'max_articles_per_month': 0,  # Unlimited
+            'features': ['Unlimited articles', 'Premium content', 'Ad-free reading', 'Email notifications'],
         },
         {
             'name': 'Premium Yearly',
@@ -87,7 +87,7 @@ def create_subscription_plans():
             'description': 'Best value! Full access for a year with 2 months free',
             'includes_email_notifications': True,
             'includes_newsletter': True,
-            'max_articles_per_month': 0,  # Unlimited
+            'features': ['Unlimited articles', 'Premium content', 'Ad-free reading', 'Email notifications', '2 months free'],
         }
     ]
     
