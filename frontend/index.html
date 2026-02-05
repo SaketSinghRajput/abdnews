@@ -35,6 +35,15 @@
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
+        body.is-loading {
+            overflow: hidden;
+        }
+        body.is-loading * {
+            visibility: hidden;
+        }
+        body.is-loading #loading-indicator {
+            visibility: visible;
+        }
         /* Header Styles */
         header {
             background: var(--white);
@@ -879,7 +888,7 @@
         }
     </style>
 </head>
-<body>
+<body class="is-loading">
     <!-- Header Section -->
     <div id="header-placeholder"></div>
 
@@ -1265,7 +1274,7 @@
     </div>
     
     <!-- Loading Indicator -->
-    <div id="loading-indicator" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; justify-content: center; align-items: center;">
+    <div id="loading-indicator" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; justify-content: center; align-items: center;">
         <div style="text-align: center;">
             <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: var(--toi-red);"></i>
             <p style="margin-top: 20px; font-size: 18px; color: var(--dark-gray);">Loading content...</p>

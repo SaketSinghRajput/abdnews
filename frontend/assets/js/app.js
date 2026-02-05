@@ -856,6 +856,7 @@ function showLoading() {
     if (loadingDiv) {
         loadingDiv.style.display = 'flex';
     }
+    document.body.classList.add('is-loading');
 }
 
 function hideLoading() {
@@ -863,6 +864,7 @@ function hideLoading() {
     if (loadingDiv) {
         loadingDiv.style.display = 'none';
     }
+    document.body.classList.remove('is-loading');
 }
 
 function showError(message) {
