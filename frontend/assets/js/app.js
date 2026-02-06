@@ -494,15 +494,36 @@ function renderAds(ads, position) {
     containers.forEach(container => {
         if (positionAds.length > 0) {
             const ad = positionAds[0]; // Show first active ad
-            const adImage = ad.image_url 
-                ? `<img src="${ad.image_url}" alt="${ad.title}" class="ad-image">`
-                : '';
+            const imageUrl = ad.image_url || (ad.image ? resolveMediaUrl(ad.image) : null);
+            
+            if (imageUrl) {
+                container.innerHTML = `
+                    <div class="advertisement" style="width: 100%; height: 100%;">
+                        <a href="${ad.link_url || '#'}" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; height: 100%;">
+                            <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: auto; display: block; border-radius: 12px;" />
+                        </a>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="advertisement" style="padding: 40px; text-align: center; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 12px;">
+                        <h3 style="font-size: 24px; color: #555; margin: 0 0 10px 0;">${ad.title}</h3>
+                        <a href="${ad.link_url || '#'}" target="_blank" style="display: inline-block; padding: 12px 24px; background: var(--toi-red); color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">Learn More</a>
+                    </div>
+                `;
+            }
+            
+            // Track impression
+            if (ad.id) {
+                // TODO: Add impression tracking API call
+                console.log(`Ad impression: ${ad.title}`);
+            }
+        } else {
+            // Show placeholder if no ads available
             container.innerHTML = `
-                <div class="advertisement">
-                    <a href="${ad.link_url}" target="_blank" rel="noopener noreferrer">
-                        ${adImage}
-                        <div class="ad-title">${ad.title}</div>
-                    </a>
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <i class="fas fa-ad" style="font-size: 48px; margin-bottom: 15px; opacity: 0.3;"></i>
+                    <p style="font-size: 16px;">Advertisement Space Available</p>
                 </div>
             `;
         }
@@ -632,6 +653,7 @@ async function loadHomePage() {
 
         // Render ads in various positions
         renderAds(ads, 'header');
+        renderAds(ads, 'homepage');
         renderAds(ads, 'content');
         renderAds(ads, 'footer');
 
