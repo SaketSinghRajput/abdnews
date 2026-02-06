@@ -242,23 +242,27 @@ class AdvertisementBannerAdmin(admin.ModelAdmin):
     search_fields = ['title', 'link_url']
     readonly_fields = [
         'impressions', 'clicks', 'ctr_display', 'image_preview',
-        'link_url_display', 'created_at', 'updated_at'
+        'created_at', 'updated_at'
     ]
     list_per_page = 20
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'position', 'order')
+            'fields': ('title', 'position', 'order', 'is_active'),
+            'description': 'Enter advertisement details. All fields marked with * are required.'
         }),
         ('Media', {
-            'fields': ('image', 'image_preview')
+            'fields': ('image', 'image_preview'),
+            'description': 'Upload an advertisement banner image (JPG, PNG, or GIF, max 5MB)'
         }),
         ('Link & Placement', {
-            'fields': ('link_url', 'link_url_display', 'is_active')
+            'fields': ('link_url',),
+            'description': 'Enter the URL where users will be redirected when clicking the ad'
         }),
         ('Analytics', {
             'fields': ('impressions', 'clicks', 'ctr_display'),
-            'classes': ('collapse',)
+            'classes': ('collapse',),
+            'description': 'Automatically tracked statistics'
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -272,10 +276,10 @@ class AdvertisementBannerAdmin(admin.ModelAdmin):
         """Display advertisement image preview"""
         if obj.image:
             return format_html(
-                '<img src="{}" style="max-width: 300px; max-height: 200px; border-radius: 5px;" />',
+                '<img src="{}" style="max-width: 300px; max-height: 200px; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />',
                 obj.image.url
             )
-        return 'No image'
+        return format_html('<span style="color: #999;">No image uploaded</span>')
     image_preview.short_description = 'Banner Preview'
     
     def link_url_display(self, obj):
@@ -285,7 +289,7 @@ class AdvertisementBannerAdmin(admin.ModelAdmin):
                 '<a href="{}" target="_blank" style="color: #0066cc; text-decoration: none;">{}</a>',
                 obj.link_url, obj.link_url[:40] + '...' if len(obj.link_url) > 40 else obj.link_url
             )
-        return 'No link'
+        return format_html('<span style="color: #999;">No link</span>')
     link_url_display.short_description = 'Link URL'
     
     def status_badge(self, obj):
