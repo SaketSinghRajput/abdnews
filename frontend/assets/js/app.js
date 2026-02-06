@@ -1216,9 +1216,12 @@ function openVideoModal(videoUrl) {
 
     // Convert video URL to embed format
     const embedUrl = convertToEmbedUrl(videoUrl);
+    
+    console.log('Opening video:', videoUrl);
+    console.log('Embed URL:', embedUrl);
 
     // Set iframe src
-    const iframe = modal.querySelector('iframe');
+    const iframe = modal.querySelector('#videoIframe');
     if (iframe) {
         iframe.src = embedUrl;
     }
@@ -1231,7 +1234,7 @@ function openVideoModal(videoUrl) {
 function closeVideoModal() {
     const modal = document.getElementById('videoModal');
     if (modal) {
-        const iframe = modal.querySelector('iframe');
+        const iframe = modal.querySelector('#videoIframe');
         if (iframe) {
             iframe.src = ''; // Stop video playback
         }
@@ -1244,6 +1247,13 @@ function closeVideoModal() {
 window.openVideoModal = openVideoModal;
 window.closeVideoModal = closeVideoModal;
 
+// Close modal on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeVideoModal();
+    }
+});
+
 function createVideoModal() {
     const modal = document.createElement('div');
     modal.id = 'videoModal';
@@ -1255,34 +1265,40 @@ function createVideoModal() {
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.9);
+        background-color: rgba(0, 0, 0, 0.95);
         align-items: center;
         justify-content: center;
+        padding: 20px;
     `;
 
     modal.innerHTML = `
-        <div style="position: relative; width: 90%; max-width: 1200px; aspect-ratio: 16/9;">
-            <button onclick="closeVideoModal()" style="position: absolute; top: -40px; right: 0; background: transparent; border: none; color: white; font-size: 36px; cursor: pointer; z-index: 10001;">
+        <div style="position: relative; width: 100%; max-width: 1200px; background: #000; border-radius: 8px; padding: 10px;">
+            <button id="closeVideoBtn" style="position: absolute; top: -45px; right: 0; background: var(--toi-red); border: none; color: white; font-size: 24px; cursor: pointer; z-index: 10001; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
                 <i class="fas fa-times"></i>
             </button>
-            <iframe 
-                style="width: 100%; height: 100%; border: none; border-radius: 8px;" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
+            <div style="position: relative; width: 100%; padding-bottom: 56.25%; background: #000;">
+                <iframe 
+                    id="videoIframe"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
+                    allowfullscreen>
+                </iframe>
+            </div>
         </div>
     `;
+
+    // Close button click handler
+    const closeBtn = modal.querySelector('#closeVideoBtn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeVideoModal();
+        });
+    }
 
     // Close on background click
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
-            closeVideoModal();
-        }
-    });
-
-    // Close on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
             closeVideoModal();
         }
     });
@@ -1292,30 +1308,53 @@ function createVideoModal() {
 }
 
 function convertToEmbedUrl(url) {
-    // YouTube
-    if (url.includes('youtube.com/watch')) {
-        const videoId = new URL(url).searchParams.get('v');
-        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    }
-    if (url.includes('youtu.be/')) {
-        const videoId = url.split('youtu.be/')[1].split('?')[0];
-        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    }
+    if (!url) return '';
+    
+    try {
+        // YouTube - regular watch URL
+        if (url.includes('youtube.com/watch')) {
+            const urlObj = new URL(url);
+            const videoId = urlObj.searchParams.get('v');
+            if (videoId) {
+                return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            }
+        }
+        
+        // YouTube - short URL
+        if (url.includes('youtu.be/')) {
+            const videoId = url.split('youtu.be/')[1].split('?')[0].split('/')[0];
+            if (videoId) {
+                return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            }
+        }
 
-    // Vimeo
-    if (url.includes('vimeo.com/')) {
-        const videoId = url.split('vimeo.com/')[1].split('?')[0];
-        return `https://player.vimeo.com/video/${videoId}?autoplay=1`;
-    }
+        // YouTube - already embed URL
+        if (url.includes('youtube.com/embed/')) {
+            return url.includes('autoplay') ? url : url + '?autoplay=1&rel=0';
+        }
 
-    // Dailymotion
-    if (url.includes('dailymotion.com/video/')) {
-        const videoId = url.split('dailymotion.com/video/')[1].split('?')[0];
-        return `https://www.dailymotion.com/embed/video/${videoId}?autoplay=1`;
-    }
+        // Vimeo
+        if (url.includes('vimeo.com/')) {
+            const videoId = url.split('vimeo.com/')[1].split('?')[0].split('/')[0];
+            if (videoId) {
+                return `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+            }
+        }
 
-    // If already an embed URL or unknown format, return as is
-    return url;
+        // Dailymotion
+        if (url.includes('dailymotion.com/video/')) {
+            const videoId = url.split('dailymotion.com/video/')[1].split('?')[0];
+            if (videoId) {
+                return `https://www.dailymotion.com/embed/video/${videoId}?autoplay=1`;
+            }
+        }
+
+        // If already an embed URL or unknown format, return as is
+        return url;
+    } catch (error) {
+        console.error('Error converting video URL:', error);
+        return url;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
