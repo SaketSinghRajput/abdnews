@@ -261,8 +261,7 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 		}),
 		('Advanced Features (JSON)', {
 			'fields': ('features',),
-			'classes': ('collapse',),
-			'description': 'Enter features as a JSON array, e.g., ["Feature 1", "Feature 2", "Feature 3"]'
+			'classes': ('collapse',)
 		}),
 		('Status', {
 			'fields': ('is_active',)
