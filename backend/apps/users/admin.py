@@ -257,7 +257,12 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 			'fields': ('price', 'duration_days')
 		}),
 		('Features', {
-			'fields': ('features', 'includes_email_notifications', 'includes_newsletter'),
+			'fields': ('includes_email_notifications', 'includes_newsletter'),
+		}),
+		('Advanced Features (JSON)', {
+			'fields': ('features',),
+			'classes': ('collapse',),
+			'description': 'Enter features as a JSON array, e.g., ["Feature 1", "Feature 2", "Feature 3"]'
 		}),
 		('Status', {
 			'fields': ('is_active',)
