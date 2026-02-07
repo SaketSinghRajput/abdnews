@@ -247,7 +247,7 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 	list_display = ['name', 'get_plan_type_badge', 'get_price_display', 'duration_days', 'is_active', 'created_at']
 	list_filter = ['plan_type', 'is_active', 'created_at']
 	search_fields = ['name', 'description']
-	readonly_fields = ['created_at', 'updated_at']
+	readonly_fields = ['created_at', 'updated_at', 'get_plan_type_badge', 'get_price_display']
 	
 	fieldsets = (
 		('Plan Details', {
@@ -289,7 +289,7 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
 	
 	def get_price_display(self, obj):
 		"""Display price with currency"""
-		return format_html('${:.2f}', obj.price)
+		return f'${obj.price:.2f}'
 	get_price_display.short_description = 'Price'
 	
 	actions = ['activate_plans', 'deactivate_plans']
