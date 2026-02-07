@@ -1,4 +1,4 @@
-// app.js - Dynamic data rendering for NewsHub frontend
+// app.js - Dynamic data rendering for ABD News frontend
 
 // Update authentication buttons in header
 function updateAuthButtons() {
@@ -61,7 +61,7 @@ function renderHeader(siteSettings, categories) {
     const logoDiv = document.querySelector('.logo');
     if (logoDiv && siteSettings) {
         // Use static logo image
-        const logoIcon = `<a href="/index.html"><img src="/assets/images/logo/logo.png" alt="NewsHub Logo" style="height: 40px; object-fit: contain;"></a>`;
+        const logoIcon = `<a href="/index.html"><img src="/assets/images/logo/logo.png" alt="ABD News Logo" style="height: 40px; object-fit: contain;"></a>`;
         
         logoDiv.innerHTML = logoIcon;
     }
@@ -419,7 +419,7 @@ function renderGridSection(section, articles) {
                             <p class="article-excerpt">${article.summary || ''}</p>
                             <div class="article-footer">
                                 <div class="article-author">
-                                    <i class="fas fa-user-circle"></i> ${article.author_name || 'NewsHub'}
+                                    <i class="fas fa-user-circle"></i> ${article.author_name || 'ABD News'}
                                 </div>
                                 <div class="article-stats">
                                     <span><i class="far fa-eye"></i> ${article.views_count?.toLocaleString() || 0}</span>
@@ -438,7 +438,7 @@ function renderGridSection(section, articles) {
 function renderSEO(seoSettings) {
     if (!seoSettings) return;
 
-    document.title = seoSettings.meta_title || 'NewsHub - Latest News';
+    document.title = seoSettings.meta_title || 'ABD News - Latest News';
     
     // Meta description
     let metaDesc = document.querySelector('meta[name="description"]');
@@ -721,7 +721,7 @@ function renderPlaceholderContent() {
     container.innerHTML = `
         <div style="text-align: center; padding: 60px 20px;">
             <i class="fas fa-newspaper" style="font-size: 64px; color: var(--medium-gray); margin-bottom: 20px;"></i>
-            <h2 style="font-size: 24px; color: var(--dark-gray); margin-bottom: 10px;">Welcome to NewsHub</h2>
+            <h2 style="font-size: 24px; color: var(--dark-gray); margin-bottom: 10px;">Welcome to ABD News</h2>
             <p style="color: var(--medium-gray); font-size: 16px; max-width: 600px; margin: 0 auto;">
                 No content available yet. Please add articles in the admin panel to see them here.
             </p>
@@ -929,7 +929,7 @@ function renderEditorialPage(articles) {
                     <div class="editorial-author">
                         <div class="author-avatar"><i class="fas fa-user"></i></div>
                         <div class="author-info">
-                            <h4>${article.author_name || 'NewsHub'}</h4>
+                            <h4>${article.author_name || 'ABD News'}</h4>
                             <p>${article.author_designation || ''}</p>
                         </div>
                     </div>
@@ -978,7 +978,7 @@ async function loadArticlePage() {
         if (title) title.textContent = article.title;
         if (categoryTag) categoryTag.textContent = article.category?.name || 'News';
 
-        if (authorName) authorName.textContent = article.author?.full_name || article.author?.user?.username || article.author_name || 'NewsHub';
+        if (authorName) authorName.textContent = article.author?.full_name || article.author?.user?.username || article.author_name || 'ABD News';
         if (authorRole) authorRole.textContent = article.author?.designation || article.author_designation || '';
 
         if (meta) {
@@ -986,7 +986,7 @@ async function loadArticlePage() {
                 <div class="article-author-info">
                     <div class="author-avatar"><i class="fas fa-user"></i></div>
                     <div>
-                        <strong>${article.author?.full_name || article.author?.user?.username || article.author_name || 'NewsHub'}</strong>
+                        <strong>${article.author?.full_name || article.author?.user?.username || article.author_name || 'ABD News'}</strong>
                         <p style="font-size: 12px; margin: 0;">${article.author?.designation || article.author_designation || ''}</p>
                     </div>
                 </div>
@@ -1013,7 +1013,7 @@ async function loadArticlePage() {
                         <i class="fas fa-lock" style="font-size: 48px; color: var(--toi-red); margin-bottom: 20px;"></i>
                         <h2 style="color: var(--dark-gray); margin-bottom: 15px;">Subscribe to Continue Reading</h2>
                         <p style="color: var(--medium-gray); font-size: 16px; margin-bottom: 25px;">
-                            This is a preview. Subscribe to NewsHub Premium to access full articles, exclusive content, and much more.
+                            This is a preview. Subscribe to ABD News Premium to access full articles, exclusive content, and much more.
                         </p>
                         <div style="display: flex; gap: 15px; justify-content: center;">
                             <a href="/pages/subscription.html" style="background: var(--toi-red); color: white; padding: 14px 30px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
@@ -1089,7 +1089,7 @@ async function loadVideosPage() {
                     
                     const metaSpans = parent.querySelectorAll('.featured-video-meta span');
                     if (metaSpans.length >= 3) {
-                        metaSpans[0].innerHTML = `<i class="fas fa-user"></i> ${featured.author_name || 'NewsHub'}`;
+                        metaSpans[0].innerHTML = `<i class="fas fa-user"></i> ${featured.author_name || 'ABD News'}`;
                         metaSpans[1].innerHTML = `<i class="far fa-eye"></i> ${featured.views_count?.toLocaleString() || 0} views`;
                         metaSpans[2].innerHTML = `<i class="far fa-calendar"></i> ${formatDate(featured.published_at)}`;
                     }
@@ -1134,7 +1134,7 @@ function renderVideoGrid(videos) {
                     <p class="video-excerpt">${video.description?.substring(0, 100) || ''}...</p>
                     <div class="video-footer">
                         <div class="video-author">
-                            <i class="fas fa-user-circle"></i> ${video.author_name || 'NewsHub'}
+                            <i class="fas fa-user-circle"></i> ${video.author_name || 'ABD News'}
                         </div>
                         <div class="video-stats">
                             <span><i class="far fa-eye"></i> ${video.views_count?.toLocaleString() || 0}</span>
