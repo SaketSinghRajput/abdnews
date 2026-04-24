@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py runserver)",
+      "Bash(python -m pip install -r requirements.txt --quiet)",
+      "Bash(python -m pip install Pillow==10.4.0 --quiet)",
+      "Bash(where python *)",
+      "Bash(C:\\\\Users\\\\user\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\python.exe *)",
+      "PowerShell(C:\\\\Users\\\\user\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\python.exe --version)",
+      "Bash(C:/Users/user/AppData/Local/Programs/Python/Python311/python.exe *)",
+      "mcp__plugin_everything-claude-code_playwright__browser_navigate",
+      "Bash(curl -s http://127.0.0.1:8000/api/news/articles/)",
+      "Bash(curl -s http://127.0.0.1:8000/api/news/categories/)",
+      "Bash(curl -s http://127.0.0.1:8000/api/news/breaking-news/)",
+      "Bash(curl -s http://127.0.0.1:8000/api/news/videos/)",
+      "Bash(curl -s http://127.0.0.1:8000/api/site-settings/)",
+      "Bash(curl -s http://127.0.0.1:8000/api/homepage/)",
+      "WebSearch"
+    ]
+  }
+}
