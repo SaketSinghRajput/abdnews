@@ -892,20 +892,6 @@
     <!-- Header Section -->
     <div id="header-placeholder"></div>
 
-    <!-- Breaking News Bar -->
-    <div class="breaking-news">
-        <div class="breaking-news-label">
-            <i class="fas fa-bolt"></i> Breaking News
-        </div>
-        <div class="breaking-news-track">
-            <div class="breaking-news-content">
-                <span class="breaking-news-text">Massive tech innovation reshapes AI landscape worldwide...</span>
-                <span class="breaking-news-text">Global markets react to sudden policy shifts across nations...</span>
-                <span class="breaking-news-text">India achieves record-breaking renewable energy milestone...</span>
-            </div>
-        </div>
-    </div>
-    
     <!-- Main Content Layout -->
     <div class="main-container">
         <!-- Left Sidebar -->
@@ -1157,8 +1143,10 @@
         <button class="video-modal-close" onclick="closeVideoModal()">
             <i class="fas fa-times"></i>
         </button>
-        <div class="video-modal-content" id="videoModalContent">
-            <!-- Video player will be inserted here -->
+        <div class="video-modal-content">
+            <div id="videoPlayer" style="position: relative; width: 100%; padding-bottom: 56.25%; background: #000;">
+                <!-- Video player will be inserted here -->
+            </div>
         </div>
     </div>
     
@@ -1207,12 +1195,17 @@
         });
         
         function openVideoModal(src, type) {
+            if (window.NewsHubOpenVideoModal) {
+                window.NewsHubOpenVideoModal(src);
+                return;
+            }
+
             const modal = document.getElementById('videoModal');
-            const content = document.getElementById('videoModalContent');
+            const content = document.getElementById('videoPlayer');
             
             if (type === 'video') {
                 content.innerHTML = `
-                    <video controls autoplay style="width: 100%; height: 70vh;">
+                    <video controls autoplay playsinline style="position: absolute; inset: 0; width: 100%; height: 100%; background: #000;">
                         <source src="${src}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -1220,7 +1213,7 @@
             } else if (type === 'iframe') {
                 content.innerHTML = `
                     <iframe src="${src}?autoplay=1" 
-                            style="width: 100%; height: 70vh;" 
+                            style="position: absolute; inset: 0; width: 100%; height: 100%; border: none;" 
                             allow="autoplay; encrypted-media" 
                             allowfullscreen>
                     </iframe>
@@ -1232,8 +1225,13 @@
         }
         
         function closeVideoModal() {
+            if (window.NewsHubCloseVideoModal) {
+                window.NewsHubCloseVideoModal();
+                return;
+            }
+
             const modal = document.getElementById('videoModal');
-            const content = document.getElementById('videoModalContent');
+            const content = document.getElementById('videoPlayer');
             
             modal.classList.remove('active');
             content.innerHTML = '';
@@ -1295,12 +1293,7 @@
     <script>
         // Load header and footer components
         document.addEventListener('DOMContentLoaded', async function() {
-            await fetch('components/header.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('header-placeholder').innerHTML = data;
-                    updateAuthButtons();
-                });
+            await loadSharedHeader('components/header.html');
             
             await fetch('components/footer.html')
                 .then(response => response.text())

@@ -81,7 +81,7 @@ function hasActiveSubscription() {
  */
 function isAdmin() {
     const user = getAuthState();
-    return user && user.role === 'admin';
+    return Boolean(user && (user.role === 'admin' || user.is_staff || user.is_superuser));
 }
 
 /**

@@ -1,23 +1,26 @@
 <!-- Header Component -->
-
-        </div>
+<header>
     <div class="header-container">
-
         <nav>
             <ul>
-                <li><a href="/index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="/pages/trending.html"><i class="fas fa-fire"></i> Trending</a></li>
                 <li><a href="/pages/editorial.html"><i class="fas fa-pen-fancy"></i> Editorial</a></li>
                 <li><a href="/pages/videos.html"><i class="fab fa-youtube"></i> Videos</a></li>
-                <li><a href="/pages/contact.html"><i class="fas fa-capsules"></i> News Capsule</a></li>
+                <li><a href="/pages/contact.html"><i class="fas fa-binoculars"></i> News Capsule</a></li>
             </ul>
         </nav>
         <div class="search-bar">
             <input type="text" placeholder="Search for news, topics, and more...">
-            <button><i class="fas fa-search"></i></button>
+            <button type="button"><i class="fas fa-search"></i></button>
         </div>
         <div class="auth-buttons" id="authButtons">
-            <!-- Authentication buttons will be inserted here by JavaScript -->
+            <a href="/pages/login.html" style="color: var(--dark-gray); text-decoration: none; font-weight: 600; padding: 8px 16px;">
+                Login
+            </a>
+            <a href="/pages/signup.html" style="background: var(--toi-red); color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: 600;">
+                Sign Up
+            </a>
         </div>
     </div>
 </header>
@@ -28,10 +31,10 @@
         <div class="edition-info">
             <span>Edition <strong>IN</strong></span>
             <span>English</span>
-            <span class="date-time">Thu, Oct 30, 2025 | Updated 06.10PM IST</span>
+            <span class="date-time">Sun May 24, 2026, 02:44 PM IST</span>
         </div>
         <div class="weather-info">
-            <span><i class="fas fa-cloud-sun"></i> 28°C, Mumbai</span>
+            <span><i class="fas fa-cloud-sun"></i> 28&deg;C, Mumbai</span>
         </div>
     </div>
 </div>
@@ -40,15 +43,28 @@
 <div class="secondary-nav">
     <div class="secondary-nav-container">
         <ul class="secondary-nav-links" id="dynamic-categories">
-            <li><a href="/index.html">ABD News World</a></li>
-            <!-- Categories will be loaded dynamically here -->
+            <li><a href="/pages/trending.html?category=technology">Technology</a></li>
+            <li><a href="/pages/trending.html?category=business">Business</a></li>
+            <li><a href="/pages/trending.html?category=science">Science</a></li>
+            <li><a href="/pages/trending.html?category=ai-machine-learning">AI &amp; Machine Learning</a></li>
+            <li><a href="/pages/trending.html?category=space">Space</a></li>
+            <li><a href="/pages/trending.html?category=health">Health</a></li>
+            <li><a href="/pages/trending.html?category=finance">Finance</a></li>
+            <li><a href="/pages/trending.html?category=startups">Startups</a></li>
+            <li><a href="/pages/trending.html?category=policy">Policy</a></li>
+            <li><a href="/pages/trending.html?category=climate">Climate</a></li>
         </ul>
-        <div class="secondary-nav-highlights">
-            <!-- <span class="highlight-tag">In The News</span>
-            <span class="highlight-tag">IND Vs AUS Live Score</span> -->
-        </div>
     </div>
 </div>
 
-<!-- Load categories script -->
-<script src="/assets/js/categories.js"></script>
+<!-- Breaking News Bar -->
+<div class="breaking-news">
+    <div class="breaking-news-label">
+        <i class="fas fa-bolt"></i> Breaking News
+    </div>
+    <div class="breaking-news-track">
+        <div class="breaking-news-content">
+            <span class="breaking-news-text">Loading breaking news...</span>
+        </div>
+    </div>
+</div>

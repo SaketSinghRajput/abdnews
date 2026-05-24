@@ -38,6 +38,24 @@ async function apiGet(path, params = {}) {
     return response.json();
 }
 
+async function apiPost(path, payload = {}) {
+    const response = await fetch(`${NEWSHUB_API_BASE}${path}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API ${response.status}: ${errorText}`);
+    }
+
+    return response.json();
+}
+
 function resolveMediaUrl(url) {
     if (!url) return null;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
@@ -134,6 +152,26 @@ async function fetchAdvertisements(position = null) {
     } catch (error) {
         console.error('Failed to fetch advertisements:', error);
         return [];
+    }
+}
+
+async function trackAdvertisement(adId, action) {
+    if (!adId || !['impression', 'click'].includes(action)) return null;
+
+    try {
+        const path = `/ads/${adId}/track/`;
+        const payload = { action };
+
+        if (navigator.sendBeacon) {
+            const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+            navigator.sendBeacon(`${NEWSHUB_API_BASE}${path}`, blob);
+            return null;
+        }
+
+        return await apiPost(path, payload);
+    } catch (error) {
+        console.error(`Failed to track ad ${action}:`, error);
+        return null;
     }
 }
 

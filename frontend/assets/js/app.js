@@ -55,13 +55,45 @@ function buildArticleLink(slug) {
     return `/pages/article.html?slug=${encodeURIComponent(slug)}`;
 }
 
+async function loadSharedHeader(componentPath = '/components/header.html') {
+    const placeholder = document.getElementById('header-placeholder');
+    if (!placeholder) return null;
+
+    const response = await fetch(componentPath);
+    const markup = await response.text();
+    placeholder.innerHTML = markup;
+
+    try {
+        const cmsData = typeof loadCMSData === 'function' ? await loadCMSData() : null;
+        if (cmsData) {
+            renderHeader(cmsData.siteSettings, cmsData.categories);
+            renderSEO(cmsData.seoSettings);
+        }
+    } catch (error) {
+        console.warn('Header CMS hydration failed:', error.message);
+    }
+
+    updateAuthButtons();
+    initSearchRedirect();
+
+    try {
+        await loadBreakingNews();
+    } catch (error) {
+        console.warn('Header breaking news hydration failed:', error.message);
+    }
+
+    return placeholder;
+}
+
+window.loadSharedHeader = loadSharedHeader;
+
 // Header Rendering
 function renderHeader(siteSettings, categories) {
     // Update logo and site name
     const logoDiv = document.querySelector('.logo');
     if (logoDiv && siteSettings) {
         // Use static logo image
-        const logoIcon = `<a href="/index.html"><img src="/assets/images/logo/logo.png" alt="ABD News Logo" style="height: 40px; object-fit: contain;"></a>`;
+        const logoIcon = `<a href="/"><img src="/assets/images/logo/logo.png" alt="ABD News Logo" style="height: 40px; object-fit: contain;"></a>`;
         
         logoDiv.innerHTML = logoIcon;
     }
@@ -70,11 +102,11 @@ function renderHeader(siteSettings, categories) {
     const primaryNavLinks = document.querySelectorAll('header nav ul li a');
     if (primaryNavLinks.length > 0) {
         const navItems = [
-            { href: '/index.html', icon: 'fas fa-home', text: 'Home' },
+            { href: '/', icon: 'fas fa-home', text: 'Home' },
             { href: '/pages/trending.html', icon: 'fas fa-fire', text: 'Trending' },
             { href: '/pages/editorial.html', icon: 'fas fa-pen-fancy', text: 'Editorial' },
             { href: '/pages/videos.html', icon: 'fab fa-youtube', text: 'Videos' },
-            { href: '/pages/contact.html', icon: 'fas fa-capsules', text: 'News Capsule' }
+            { href: '/pages/contact.html', icon: 'fas fa-binoculars', text: 'News Capsule' }
         ];
         
         primaryNavLinks.forEach((link, index) => {
@@ -499,7 +531,7 @@ function renderAds(ads, position) {
             if (imageUrl) {
                 container.innerHTML = `
                     <div class="advertisement" style="width: 100%; height: 100%;">
-                        <a href="${ad.link_url || '#'}" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; height: 100%;">
+                        <a href="${ad.link_url || '#'}" target="_blank" rel="noopener noreferrer" data-ad-id="${ad.id}" style="display: block; width: 100%; height: 100%;">
                             <img src="${imageUrl}" alt="${ad.title}" style="width: 100%; height: auto; display: block; border-radius: 12px;" />
                         </a>
                     </div>
@@ -508,15 +540,17 @@ function renderAds(ads, position) {
                 container.innerHTML = `
                     <div class="advertisement" style="padding: 40px; text-align: center; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 12px;">
                         <h3 style="font-size: 24px; color: #555; margin: 0 0 10px 0;">${ad.title}</h3>
-                        <a href="${ad.link_url || '#'}" target="_blank" style="display: inline-block; padding: 12px 24px; background: var(--toi-red); color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">Learn More</a>
+                        <a href="${ad.link_url || '#'}" target="_blank" data-ad-id="${ad.id}" style="display: inline-block; padding: 12px 24px; background: var(--toi-red); color: white; text-decoration: none; border-radius: 6px; font-weight: 600;">Learn More</a>
                     </div>
                 `;
             }
             
             // Track impression
             if (ad.id) {
-                // TODO: Add impression tracking API call
-                console.log(`Ad impression: ${ad.title}`);
+                trackAdvertisement(ad.id, 'impression');
+                container.querySelectorAll('[data-ad-id]').forEach(link => {
+                    link.addEventListener('click', () => trackAdvertisement(ad.id, 'click'));
+                });
             }
         } else {
             // Show placeholder if no ads available
@@ -1084,6 +1118,12 @@ async function loadVideosPage() {
                 const thumbnail = resolveMediaUrl(featured.featured_image) || 'https://via.placeholder.com/1200x600?text=Featured+Video';
                 const parent = featuredContainer.closest('.featured-video');
                 if (parent) {
+                    featuredContainer.dataset.videoUrl = featured.video_url || '';
+                    featuredContainer.style.cursor = featured.video_url ? 'pointer' : 'default';
+                    featuredContainer.onclick = () => {
+                        if (featured.video_url) openVideoModal(featured.video_url);
+                    };
+
                     parent.querySelector('img').src = thumbnail;
                     parent.querySelector('.featured-video-info h2').textContent = featured.title;
                     
@@ -1236,16 +1276,32 @@ function openVideoModal(videoUrl) {
         modal = createVideoModal();
     }
 
-    // Convert video URL to embed format
-    const embedUrl = convertToEmbedUrl(videoUrl);
-    
-    console.log('Opening video:', videoUrl);
-    console.log('Embed URL:', embedUrl);
-
-    // Set iframe src
-    const iframe = modal.querySelector('#videoIframe');
-    if (iframe) {
-        iframe.src = embedUrl;
+    const player = modal.querySelector('#videoPlayer');
+    if (player) {
+        if (isDirectVideoUrl(videoUrl)) {
+            player.innerHTML = `
+                <video
+                    src="${resolveMediaUrl(videoUrl)}"
+                    style="position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: 8px; background: #000;"
+                    controls
+                    autoplay
+                    playsinline>
+                    Your browser does not support the video tag.
+                </video>
+            `;
+        } else {
+            const embedUrl = convertToEmbedUrl(videoUrl);
+            player.innerHTML = `
+                <iframe
+                    id="videoIframe"
+                    src="${embedUrl}"
+                    style="position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: 8px;"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                </iframe>
+            `;
+        }
     }
 
     // Show modal
@@ -1256,9 +1312,9 @@ function openVideoModal(videoUrl) {
 function closeVideoModal() {
     const modal = document.getElementById('videoModal');
     if (modal) {
-        const iframe = modal.querySelector('#videoIframe');
-        if (iframe) {
-            iframe.src = ''; // Stop video playback
+        const player = modal.querySelector('#videoPlayer');
+        if (player) {
+            player.innerHTML = '';
         }
         modal.style.display = 'none';
         document.body.style.overflow = '';
@@ -1268,6 +1324,8 @@ function closeVideoModal() {
 // Make functions globally accessible
 window.openVideoModal = openVideoModal;
 window.closeVideoModal = closeVideoModal;
+window.NewsHubOpenVideoModal = openVideoModal;
+window.NewsHubCloseVideoModal = closeVideoModal;
 
 // Close modal on escape key
 document.addEventListener('keydown', function(e) {
@@ -1298,13 +1356,7 @@ function createVideoModal() {
             <button id="closeVideoBtn" style="position: absolute; top: -45px; right: 0; background: var(--toi-red); border: none; color: white; font-size: 24px; cursor: pointer; z-index: 10001; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
                 <i class="fas fa-times"></i>
             </button>
-            <div style="position: relative; width: 100%; padding-bottom: 56.25%; background: #000;">
-                <iframe 
-                    id="videoIframe"
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 8px;" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
-                    allowfullscreen>
-                </iframe>
+            <div id="videoPlayer" style="position: relative; width: 100%; padding-bottom: 56.25%; background: #000;">
             </div>
         </div>
     `;
@@ -1327,6 +1379,28 @@ function createVideoModal() {
 
     document.body.appendChild(modal);
     return modal;
+}
+
+function isDirectVideoUrl(url) {
+    if (!url) return false;
+
+    try {
+        const parsed = new URL(url, window.location.origin);
+        return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(parsed.pathname);
+    } catch (error) {
+        return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+    }
+}
+
+function appendVideoQuery(url, params) {
+    try {
+        const parsed = new URL(url);
+        Object.entries(params).forEach(([key, value]) => parsed.searchParams.set(key, value));
+        return parsed.toString();
+    } catch (error) {
+        const separator = url.includes('?') ? '&' : '?';
+        return `${url}${separator}${new URLSearchParams(params).toString()}`;
+    }
 }
 
 function convertToEmbedUrl(url) {
@@ -1352,7 +1426,7 @@ function convertToEmbedUrl(url) {
 
         // YouTube - already embed URL
         if (url.includes('youtube.com/embed/')) {
-            return url.includes('autoplay') ? url : url + '?autoplay=1&rel=0';
+            return appendVideoQuery(url, { autoplay: '1', rel: '0' });
         }
 
         // Vimeo

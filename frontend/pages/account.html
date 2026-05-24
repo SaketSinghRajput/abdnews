@@ -618,12 +618,7 @@
         document.addEventListener('DOMContentLoaded', async function() {
             try {
                 // Load header and footer components
-                await fetch('../components/header.html')
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById('header-placeholder').innerHTML = data;
-                        updateAuthButtons();
-                    });
+                await loadSharedHeader('../components/header.html');
                 
                 await fetch('../components/footer.html')
                     .then(response => response.text())
@@ -881,11 +876,12 @@
                 });
 
                 if (response.ok) {
-                    showAlert('Password changed successfully!', 'success');
+                    showAlert('Password changed successfully. Please sign in again.', 'success');
                     document.getElementById('changePasswordForm').reset();
+                    setTimeout(() => logout(), 1200);
                 } else {
                     const error = await response.json();
-                    showAlert(error.detail || 'Failed to change password', 'error');
+                    showAlert(error.detail || error.error || error.new_password?.[0] || 'Failed to change password', 'error');
                 }
             } catch (error) {
                 showAlert(error.message || 'Failed to change password', 'error');
@@ -921,8 +917,7 @@
         // Logout all devices
         async function logoutAllDevices() {
             if (confirm('Are you sure you want to logout from all other devices?')) {
-                // This would require a backend endpoint
-                showAlert('All other sessions have been terminated', 'success');
+                showAlert('Change your password to terminate all active sessions.', 'success');
             }
         }
 

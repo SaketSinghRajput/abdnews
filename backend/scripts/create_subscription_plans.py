@@ -2,8 +2,10 @@
 Script to create sample subscription plans for NewsHub
 """
 import os
+import sys
 import django
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
@@ -52,6 +54,6 @@ plans = [
 
 for plan_data in plans:
     plan = SubscriptionPlan.objects.create(**plan_data)
-    print(f'✅ Created: {plan.name} - ${plan.price} for {plan.duration_days} days')
+    print(f'Created: {plan.name} - ${plan.price} for {plan.duration_days} days')
 
-print(f'\n🎉 Successfully created {SubscriptionPlan.objects.count()} subscription plans!')
+print(f'\nSuccessfully created {SubscriptionPlan.objects.count()} subscription plans!')

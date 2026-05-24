@@ -354,12 +354,7 @@
         // Load header and footer
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                await fetch('../components/header.html')
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById('header-placeholder').innerHTML = data;
-                        updateAuthButtons();
-                    });
+                await loadSharedHeader('../components/header.html');
                 
                 await fetch('../components/footer.html')
                     .then(response => response.text())

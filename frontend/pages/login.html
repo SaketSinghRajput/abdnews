@@ -283,12 +283,7 @@
         // Load header and footer
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                await fetch('../components/header.html')
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById('header-placeholder').innerHTML = data;
-                        updateAuthButtons();
-                    });
+                await loadSharedHeader('../components/header.html');
                 
                 await fetch('../components/footer.html')
                     .then(response => response.text())
@@ -348,10 +343,10 @@
                     }
                     
                     // Check if admin user (staff or admin role)
-                    if (result.user.role === 'admin' || result.user.is_staff) {
-                        // Redirect to admin panel
+                    if (result.user.role === 'admin' || result.user.is_staff || result.user.is_superuser) {
+                        // Redirect to the JWT-powered admin panel
                         setTimeout(() => {
-                            window.location.href = '/admin/';
+                            window.location.href = '/pages/admin-categories.html';
                         }, 1000);
                     } else {
                         // Redirect to dashboard

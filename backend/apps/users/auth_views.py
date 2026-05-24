@@ -5,7 +5,10 @@ from rest_framework import status, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from .serializers import SignupSerializer, LoginSerializer, UserSerializer, SubscriptionPlanSerializer, UserSubscriptionSerializer
@@ -68,7 +71,7 @@ class LoginView(APIView):
             # Determine redirect URL for admin users
             redirect_url = None
             if user.is_staff or user.is_superuser:
-                redirect_url = '/admin/'
+                redirect_url = '/pages/admin-categories.html'
             
             response_data = {
                 'message': 'Login successful',
@@ -211,8 +214,19 @@ class ChangePasswordView(APIView):
         if not user.check_password(current_password):
             return Response({'detail': 'Current password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
         
+        try:
+            validate_password(new_password, user)
+        except ValidationError as exc:
+            return Response({'new_password': list(exc.messages)}, status=status.HTTP_400_BAD_REQUEST)
+
         # Set new password
         user.set_password(new_password)
         user.save()
+
+        for token in OutstandingToken.objects.filter(user=user):
+            BlacklistedToken.objects.get_or_create(token=token)
         
-        return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+        return Response({
+            'message': 'Password changed successfully. Please sign in again.',
+            'reauthenticate': True
+        }, status=status.HTTP_200_OK)

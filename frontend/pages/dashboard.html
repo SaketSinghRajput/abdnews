@@ -478,12 +478,7 @@
                 }
 
                 // Load header and footer components
-                await fetch('../components/header.html')
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById('header-placeholder').innerHTML = data;
-                        updateAuthButtons();
-                    });
+                await loadSharedHeader('../components/header.html');
                 
                 await fetch('../components/footer.html')
                     .then(response => response.text())
@@ -514,7 +509,7 @@
 
             if (user.has_active_subscription) {
                 statusEl.textContent = 'Premium';
-                statusEl.style.color = var(--toi-red);
+                statusEl.style.color = 'var(--toi-red)';
                 
                 card.innerHTML = `
                     <div class="subscription-badge">PREMIUM</div>

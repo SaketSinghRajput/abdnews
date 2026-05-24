@@ -244,11 +244,7 @@
     <script src="../assets/js/app.js"></script>
     <script>
         // Load header component
-        fetch('../components/header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-placeholder').innerHTML = data;
-            });
+        loadSharedHeader('../components/header.html');
         
         // Load footer component
         fetch('../components/footer.html')

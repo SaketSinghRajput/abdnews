@@ -154,7 +154,7 @@ const CategoryManager = {
         if (toiLink) {
             container.appendChild(toiLink);
         } else {
-            container.innerHTML = '<li><a href="/index.html">TOI*</a></li>';
+            container.innerHTML = '<li><a href="/">TOI*</a></li>';
         }
         
         // Add category links

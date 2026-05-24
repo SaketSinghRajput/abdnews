@@ -311,19 +311,16 @@
 
     <div id="footer-placeholder"></div>
 
+    <script src="../assets/js/api.js"></script>
     <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/app.js"></script>
     <script>
-        const API_BASE = 'http://localhost:8000/api';
+        const API_BASE = '/api';
         let categories = [];
 
         // Load header and footer
-        fetch('../components/header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-placeholder').innerHTML = data;
-                updateAuthButtons();
-                checkAdminAccess();
-            });
+        loadSharedHeader('../components/header.html')
+            .then(() => checkAdminAccess());
 
         fetch('../components/footer.html')
             .then(response => response.text())
@@ -334,19 +331,33 @@
         // Check if user is admin
         function checkAdminAccess() {
             const user = getCurrentUser();
-            if (!user || !user.is_staff) {
+            if (!user || !(user.is_staff || user.is_superuser || user.role === 'admin')) {
                 alert('Access denied. Admin privileges required.');
                 window.location.href = '/';
+                return;
             }
+
+            loadCategories();
+        }
+
+        function getAdminHeaders(contentType = false) {
+            const token = getAccessToken();
+            const headers = {
+                'Authorization': `Bearer ${token}`
+            };
+
+            if (contentType) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            return headers;
         }
 
         // Load categories
         async function loadCategories() {
             try {
                 const response = await fetch(`${API_BASE}/news/admin/categories/`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
+                    headers: getAdminHeaders()
                 });
                 
                 if (!response.ok) throw new Error('Failed to load categories');
@@ -502,10 +513,7 @@
                 
                 const response = await fetch(url, {
                     method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    },
+                    headers: getAdminHeaders(true),
                     body: JSON.stringify(data)
                 });
                 
@@ -527,9 +535,7 @@
             try {
                 const response = await fetch(`${API_BASE}/news/admin/categories/${id}/`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
+                    headers: getAdminHeaders()
                 });
                 
                 const data = await response.json();
@@ -554,8 +560,6 @@
             }
         });
 
-        // Load categories on page load
-        loadCategories();
     </script>
 </body>
 </html>

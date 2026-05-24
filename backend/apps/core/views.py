@@ -5,7 +5,11 @@ This module provides REST API endpoints for site-wide CMS models including
 site settings, social links, advertisements, footer, sidebar, homepage sections, and SEO.
 """
 
-from rest_framework import generics
+from django.db.models import F
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from .models import (
     SiteSettings, SocialLink, AdvertisementBanner,
@@ -79,6 +83,40 @@ class AdBannersListAPIView(generics.ListAPIView):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+
+
+class AdBannerTrackAPIView(APIView):
+    """
+    Track advertisement impressions and clicks from the public frontend.
+
+    POST body:
+        action: "impression" or "click"
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request, pk):
+        action = request.data.get('action')
+        field_by_action = {
+            'impression': 'impressions',
+            'click': 'clicks',
+        }
+
+        field = field_by_action.get(action)
+        if field is None:
+            return Response(
+                {'error': 'action must be "impression" or "click"'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        banner = get_object_or_404(AdvertisementBanner, pk=pk, is_active=True)
+        AdvertisementBanner.objects.filter(pk=banner.pk).update(**{field: F(field) + 1})
+        banner.refresh_from_db(fields=[field])
+
+        return Response({
+            'id': banner.pk,
+            'action': action,
+            field: getattr(banner, field),
+        })
 
 
 class FooterSettingsAPIView(generics.RetrieveAPIView):
